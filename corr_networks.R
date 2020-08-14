@@ -3,6 +3,7 @@ source("selecting_proteins.R")
 library(readxl)
 library(Matrix)
 library(igraph)
+library(ggplot2)
 data <- read_excel("C:/Users/jamsh/OneDrive/Desktop/RTG_proteomics_Local/cDIA_MXLSAKBH-Exp1-2-3-4_Gill_with Volcanoplots_SelectedSubset (2).xlsx")
 
 
@@ -21,11 +22,15 @@ vec_cor <- function(df){
 }
 
 wass_by_pair <- function(pair){
-  corr_mid <- apply(cbind(pair$ak, pair$bh, pair$ls, pair$m), 1, median)
-  wass_ak <- mean(abs(corr_mid - pair$ak))
-  wass_bh <- mean(abs(corr_mid - pair$bh))
-  wass_ls <- mean(abs(corr_mid - pair$ls))
-  wass_m <- mean(abs(corr_mid - pair$m))
+  sorted_ak = sort(pair$ak)
+  sorted_bh = sort(pair$bh)
+  sorted_ls = sort(pair$ls)
+  sorted_m =  sort(pair$m)
+  corr_mid <- sort(apply(cbind(sorted_ak, sorted_bh, sorted_ls, sorted_m), 1, median))
+  wass_ak <- mean(abs(corr_mid - sorted_ak))
+  wass_bh <- mean(abs(corr_mid - sorted_bh))
+  wass_ls <- mean(abs(corr_mid - sorted_ls))
+  wass_m <- mean(abs(corr_mid - sorted_m))
   
   return(wass_ak + wass_bh + wass_ls + wass_m)
 }
@@ -33,14 +38,14 @@ wass_by_pair <- function(pair){
 
 set.seed(2020)
 
-#Grab subset of 5 proteins
-sub_prots = sig_prots_special[1:5]
+
 
 #convert data to numeric
 labeled_data = data.frame(lapply(labeled_data, function(x) as.numeric(as.character(x))))
 
 
-
+#Grab subset of 5 proteins
+sub_prots = sig_prots_special[17:21]
 
 
 rep = 200
@@ -107,11 +112,13 @@ edge_vec = unlist(strsplit(name.pairs, split = "-"))
 #Create network
 net <- graph(edges = edge_vec, directed = F)
 
-E(net)$width = (wass_dist)^2*10
+cut.off = 0.8
+E(net)$width = (wass_dist)*10
 E(net)$type = ifelse(wass_dist > cut.off, "hyperlink", "none")
 
 #set cutoff for green edge
-cut.off = 0.8
+
 
 plot(net, edge.color=c("slategrey", "#008c3c")[(E(net)$type=="hyperlink")+1])
+
 
