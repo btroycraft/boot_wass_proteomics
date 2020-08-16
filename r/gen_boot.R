@@ -1,0 +1,1 @@
+gen.boot <- function(X, m=nrow(X)) X[sample(1:nrow(X), m, replace=TRUE), ]
