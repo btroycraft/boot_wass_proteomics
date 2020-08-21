@@ -20,7 +20,7 @@ boot_reps <- 20
 
 data <- read.table('cDIA_MXLSAKBH-Exp1-2-3-4_Gill_r_format.csv', header=TRUE, sep=',')
 #data <- as.data.frame(readxl::read_excel("./cDIA_MXLSAKBH-Exp1-2-3-4_Gill_with Volcanoplots_SelectedSubset.xlsx"))
-data <- data[, 1:50]
+data <- data[, 1:200]
 
 protein_names <- colnames(data)
 protein_names <- protein_names[!(protein_names %in% c('location', 'sample'))]
@@ -33,9 +33,13 @@ pops <- lapply(split(data[, !(colnames(data) %in% c('sample', 'location'))], dat
 pop_boots <- lapply(pops, function(pop){
   
   t(replicate(boot_reps, {
-    X_boot <- gen.boot(pop)
-    cor_boot <- cor(X_boot)
-    
+    repeat({
+      X_boot <- gen.boot(pop)
+      cor_boot <- try(cor(X_boot), silent=TRUE)
+      if(!any(is.na(cor_boot))){
+        break;
+      }
+    })
     return( cor_boot[which(upper.tri(cor_boot))] )
   }))
 })
@@ -65,6 +69,6 @@ system.time({
 best_sub_pw_w1_1
 
 system.time({
-  best_sub_pw_w1_2 <- sum.combn.mat(wass_pw_w1, 4, c(5, 5))
+  best_sub_pw_w1_2 <- sum.combn.mat(wass_pw_w1, 6, c(100, 100))
 })
   best_sub_pw_w1_2
