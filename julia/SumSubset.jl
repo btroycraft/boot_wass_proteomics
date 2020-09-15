@@ -1,7 +1,3 @@
-module SumSubset
-
-export sum_subset
-
 sum_subset = function(X)
 
   # For the input matrix, output a function that sums across a given set of indices. Output is a closure, so it contains the required information about the matrix X, but does not copy the actual matrix array.
@@ -17,8 +13,8 @@ sum_subset = function(X)
       end
     end
 
+    total /= binomial(length_subset, 2)
+
     return total
   end
-end
-
 end

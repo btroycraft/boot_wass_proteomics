@@ -1,21 +1,20 @@
-module OptimSubset
+using Random: shuffle!
+using StatsBase: sample!
+using IterTools: subsets
 
-export max_subset, min_subset, max_subset_iter, min_subset_iter, dist_subset, dist_subset_rand
-
-max_subset = function(func, length_sub, range_arg; keep = 1)
+max_subset = function(func, length_sub, length_range; keep = 1)
 
     # Gets global maximum by exhaustive search through subsets of range_arg. Requires a function that takes as input a set of indices. keep gives the number of top elements to return
 
-    out_type = typeof(func(range_arg[1:length_sub]))
-    val_max = typemin(out_type)
+    val_max = typemin(Float64)
     keep_out = 0
 
-    out_list = Vector{Tuple{out_type, Vector{Int}}}(undef, keep)
+    out_list = Vector{Tuple{Float64, Vector{Int}}}(undef, keep)
     for ind in 1:keep
         out_list[ind] = (val_max, Vector{Int}(undef, length_sub))
     end
 
-    for sub in IterTools.subsets(range_arg, length_sub)
+    for sub in subsets(1:length_range, length_sub)
 
         val = func(sub)
 
@@ -24,7 +23,7 @@ max_subset = function(func, length_sub, range_arg; keep = 1)
             keep_out += keep_out < keep
 
             out_list[1] = (val, out_list[1][2])
-            out_list[1][2] = sub
+            out_list[1][2] .= sub
 
             sort!(out_list;
                 by = x->x[1])
@@ -42,7 +41,7 @@ max_subset = function(func, length_sub, range_arg; keep = 1)
         out_mat[:, ind] = out_list[keep-ind+1][2]
     end
 
-    out_vec = Vector{out_type}(undef, keep_out)
+    out_vec = Vector{Float64}(undef, keep_out)
     for ind in 1:keep_out
         out_vec[ind] = out_list[keep-ind+1][1]
     end
@@ -50,20 +49,19 @@ max_subset = function(func, length_sub, range_arg; keep = 1)
     return out_vec, out_mat
 end
 
-min_subset = function(func, length_sub, range_arg; keep = 1)
+min_subset = function(func, length_sub, length_range; keep = 1)
 
     # Gets global minimum by exhaustive search through subsets of range_arg. Requires a function that takes as input a set of indices. keep gives the number of bottom elements to return
 
-    out_type = typeof(func(range_arg[1:length_sub]))
-    val_min = typemax(out_type)
+    val_min = typemax(Float64)
     keep_out = 0
 
-    out_list = Vector{Tuple{out_type, Vector{Int}}}(undef, keep)
+    out_list = Vector{Tuple{Float64, Vector{Int}}}(undef, keep)
     for ind in 1:keep
         out_list[ind] = (val_min, Vector{Int}(undef, length_sub))
     end
 
-    for sub in IterTools.subsets(range_arg, length_sub)
+    for sub in subsets(1:length_range, length_sub)
 
         val = func(sub)
 
@@ -72,7 +70,7 @@ min_subset = function(func, length_sub, range_arg; keep = 1)
             keep_out += keep_out < keep
 
             out_list[1] = (val, out_list[1][2])
-            out_list[1][2] = sub
+            out_list[1][2] .= sub
 
             sort!(out_list;
                 by = x->x[1],
@@ -91,7 +89,7 @@ min_subset = function(func, length_sub, range_arg; keep = 1)
         out_mat[:, ind] = out_list[keep-ind+1][2]
     end
 
-    out_vec = Vector{out_type}(undef, keep_out)
+    out_vec = Vector{Float64}(undef, keep_out)
     for ind in 1:keep_out
         out_vec[ind] = out_list[keep-ind+1][1]
     end
@@ -99,34 +97,32 @@ min_subset = function(func, length_sub, range_arg; keep = 1)
     return out_vec, out_mat
 end
 
-max_subset_iter = function(func, length_sub, range_arg; reps = 1, keep = 1, iter = 1000)
+max_subset_iter = function(func, length_sub, length_range; reps = 1, keep = 1, iter = 1000)
 
     # Gets estimated maximum by iterative search through subsets of range_arg. Requires a function that takes as input a set of indices. keep gives the number of top elements to return. reps gives the number of randomly selected starting points
 
-    length_range = length(range_arg)
+    range_perm = vcat(1:length_range)
+
     opt_size = length_range - length_sub
 
-    out_type = typeof(func(range_arg[1:length_sub]))
+    opt = Vector{Int}(undef, opt_size)
+    sub = Vector{Int}(undef, length_sub)
+    sub_temp = Vector{Int}(undef, length_sub)
 
-    range_perm = vcat(range_arg)
-    opt = Vector{Int}(opt_size)
-    sub = Vector{Int}(length_sub)
-    sub_temp = Vector{Int}(length_sub)
-
-    val_max_total = val_max = val_max_sub = typemin(out_type)
+    val_max_total = val_max = val_max_sub = typemin(Float64)
 
     ind_max_opt = ind_max_sub = 1
 
     keep_out = 0
 
-    out_list = Vector{Tuple{out_type, Vector{Int}}}(undef, keep)
+    out_list = Vector{Tuple{Float64, Vector{Int}}}(undef, keep)
     for ind in 1:keep
-        out_list[ind] = (val_max_total, Vector{Int}(undef, length_sub))
+        out_list[ind] = (val_max_total, zeros(Int, length_sub))
     end
 
     for _ in 1:reps
 
-        Random.shuffle!(range_perm)
+        shuffle!(range_perm)
 
         for ind in 1:length_sub
             sub[ind] = range_perm[ind]
@@ -139,7 +135,7 @@ max_subset_iter = function(func, length_sub, range_arg; reps = 1, keep = 1, iter
 
         for _ in 1:iter
 
-            val_max_sub = typemin(out_type)
+            val_max_sub = typemin(Float64)
 
             for ind_old in 1:length_sub
 
@@ -163,8 +159,7 @@ max_subset_iter = function(func, length_sub, range_arg; reps = 1, keep = 1, iter
                         sort!(sub_temp)
 
                         for ind in 1:keep
-                            val > out_list[ind][1] && break
-                            if val == out_list[ind][1] && sub_temp == out_list[ind][2]
+                            if sub_temp == out_list[ind][2]
                                 @goto LOOP_EXIT
                             end
                         end
@@ -198,7 +193,7 @@ max_subset_iter = function(func, length_sub, range_arg; reps = 1, keep = 1, iter
         out_mat[:, ind] = out_list[keep-ind+1][2]
     end
 
-    out_vec = Vector{out_type}(undef, keep_out)
+    out_vec = Vector{Float64}(undef, keep_out)
     for ind in 1:keep_out
         out_vec[ind] = out_list[keep-ind+1][1]
     end
@@ -206,34 +201,32 @@ max_subset_iter = function(func, length_sub, range_arg; reps = 1, keep = 1, iter
     return out_vec, out_mat
 end
 
-min_subset_iter = function(func, length_sub, range_arg; reps = 1, keep = 1, iter = 1000)
+min_subset_iter = function(func, length_sub, length_range; reps = 1, keep = 1, iter = 1000)
 
     # Gets estimated minimum by iterative search through subsets of range_arg. Requires a function that takes as input a set of indices. keep gives the number of top elements to return. reps gives the number of randomly selected starting points
 
-    length_range = length(range_arg)
+    range_perm = vcat(1:length_range)
+
     opt_size = length_range - length_sub
 
-    out_type = typeof(func(range_arg[1:length_sub]))
+    opt = Vector{Int}(undef, opt_size)
+    sub = Vector{Int}(undef, length_sub)
+    sub_temp = Vector{Int}(undef, length_sub)
 
-    range_perm = vcat(range_arg)
-    opt = Vector{Int}(opt_size)
-    sub = Vector{Int}(length_sub)
-    sub_temp = Vector{Int}(length_sub)
-
-    val_min_total = val_min = val_min_sub = typemax(out_type)
+    val_min_total = val_min = val_min_sub = typemax(Float64)
 
     ind_min_opt = ind_min_sub = 1
 
     keep_out = 0
 
-    out_list = Vector{Tuple{out_type, Vector{Int}}}(undef, keep)
+    out_list = Vector{Tuple{Float64, Vector{Int}}}(undef, keep)
     for ind in 1:keep
         out_list[ind] = (val_min_total, Vector{Int}(undef, length_sub))
     end
 
     for _ in 1:reps
 
-        Random.shuffle!(range_perm)
+        shuffle!(range_perm)
 
         for ind in 1:length_sub
             sub[ind] = range_perm[ind]
@@ -246,7 +239,7 @@ min_subset_iter = function(func, length_sub, range_arg; reps = 1, keep = 1, iter
 
         for _ in 1:iter
 
-            val_min_sub = typemin(out_type)
+            val_min_sub = typemin(Float64)
 
             for ind_old in 1:length_sub
 
@@ -270,8 +263,7 @@ min_subset_iter = function(func, length_sub, range_arg; reps = 1, keep = 1, iter
                         sort!(sub_temp)
 
                         for ind in 1:keep
-                            val < out_list[ind][1] && break
-                            if val == out_list[ind][1] && sub_temp == out_list[ind][2]
+                            if sub_temp == out_list[ind][2]
                                 @goto LOOP_EXIT
                             end
                         end
@@ -306,7 +298,7 @@ min_subset_iter = function(func, length_sub, range_arg; reps = 1, keep = 1, iter
         out_mat[:, ind] = out_list[keep-ind+1][2]
     end
 
-    out_vec = Vector{out_type}(undef, keep_out)
+    out_vec = Vector{Float64}(undef, keep_out)
     for ind in 1:keep_out
         out_vec[ind] = out_list[keep-ind+1][1]
     end
@@ -314,49 +306,36 @@ min_subset_iter = function(func, length_sub, range_arg; reps = 1, keep = 1, iter
     return out_vec, out_mat
 end
 
-dist_subset = function(func, length_sub, range_arg; bound, length_bin)
+dist_subset = function(func, length_sub, length_range; lower, upper, length_bin)
 
-    out_type = float(typeof(func(range_arg[1:length_subset])))
-
-    lower = convert(out_type, bound[1])
-    upper = convert(out_type, bound[2])
-
-    out_bin = range_arg(lower, upper;
+    out_bin = range(lower, upper;
         length = length_bin+1)
 
     out_dist = zeros(Int, length_bin)
 
-    for sub in IterTools.subsets(range_arg, length_sub)
+    for sub in subsets(range_arg, length_sub)
         val = func(sub)
-        out_dist[floor(Int, (val-lower)/(upper-lower))] += val >= lower && val < upper
+        out_dist[floor(Int, (val-lower)/(upper-lower)*length_bin)+1] += val >= lower && val < upper
     end
 
     return out_dist, out_bin
 end
 
-dist_subset_rand = function(func, length_sub, range_arg; bound, length_bin, reps)
+dist_subset_rand = function(func, length_sub, length_range; lower, upper, length_bin, reps)
 
-    out_type = float(typeof(func(range_arg[1:length_subset])))
-
-    lower = convert(out_type, bound[1])
-    upper = convert(out_type, bound[2])
-
-    out_bin = range_arg(lower, upper;
+    out_bin = range(lower, upper;
         length = length_bin+1)
 
     out_dist = zeros(Int, length_bin)
 
     sub = Vector{Int}(undef, length_sub)
 
-    for _ in 1:reps
+    for ind in 1:reps
 
-        StatsBase.sample!(range_arg, sub)
+        sample!(1:length_range, sub)
         val = func(sub)
-
-        out_dist[floor(Int, (val-lower)/(upper-lower))] += val >= lower && val < upper
+        val >= lower && val < upper && (out_dist[floor(Int, (val-lower)/(upper-lower)*length_bin)+1] += 1)
     end
 
     return out_dist, out_bin
-end
-
 end
