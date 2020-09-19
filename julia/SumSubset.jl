@@ -1,20 +1,20 @@
-sum_subset = function(X)
+sum_subset_close = function(mat)
 
   # For the input matrix, output a function that sums across a given set of indices. Output is a closure, so it contains the required information about the matrix X, but does not copy the actual matrix array.
 
   return function(subset)
 
     length_subset = length(subset)
-    total = 0.
+    out = 0.
 
     for ind1 in 1:length_subset
       for ind2 in (ind1+1):length_subset
-        total += X[subset[ind1], subset[ind2]]
+        out += mat[subset[ind1], subset[ind2]]
       end
     end
 
-    total /= binomial(length_subset, 2)
+    out /= binomial(length_subset, 2)
 
-    return total
+    return out
   end
 end

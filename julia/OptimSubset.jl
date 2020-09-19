@@ -306,27 +306,27 @@ min_subset_iter = function(func, length_sub, length_range; reps = 1, keep = 1, i
     return out_vec, out_mat
 end
 
-dist_subset = function(func, length_sub, length_range; lower, upper, length_bin)
+dist_subset = function(func, length_sub, length_range; lower, upper, num_bins)
 
     out_bin = range(lower, upper;
-        length = length_bin+1)
+        length = num_bins+1)
 
-    out_dist = zeros(Int, length_bin)
+    out_dist = zeros(Int, num_bins)
 
-    for sub in subsets(range_arg, length_sub)
+    for sub in subsets(1:length_range, length_sub)
         val = func(sub)
-        out_dist[floor(Int, (val-lower)/(upper-lower)*length_bin)+1] += val >= lower && val < upper
+        out_dist[floor(Int, (val-lower)/(upper-lower)*num_bins)+1] += val >= lower && val < upper
     end
 
     return out_dist, out_bin
 end
 
-dist_subset_rand = function(func, length_sub, length_range; lower, upper, length_bin, reps)
+dist_subset_rand = function(func, length_sub, length_range; lower, upper, num_bins, reps)
 
     out_bin = range(lower, upper;
-        length = length_bin+1)
+        length = num_bins+1)
 
-    out_dist = zeros(Int, length_bin)
+    out_dist = zeros(Int, num_bins)
 
     sub = Vector{Int}(undef, length_sub)
 
@@ -334,7 +334,7 @@ dist_subset_rand = function(func, length_sub, length_range; lower, upper, length
 
         sample!(1:length_range, sub)
         val = func(sub)
-        val >= lower && val < upper && (out_dist[floor(Int, (val-lower)/(upper-lower)*length_bin)+1] += 1)
+        val >= lower && val < upper && (out_dist[floor(Int, (val-lower)/(upper-lower)*num_bins)+1] += 1)
     end
 
     return out_dist, out_bin
