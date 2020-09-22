@@ -1,3 +1,7 @@
+module SumSubset
+
+export sum_subset_close
+
 sum_subset_close = function(mat)
 
   # For the input matrix, output a function that sums across a given set of indices. Output is a closure, so it contains the required information about the matrix X, but does not copy the actual matrix array.
@@ -17,4 +21,6 @@ sum_subset_close = function(mat)
 
     return out
   end
+end
+
 end

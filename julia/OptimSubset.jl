@@ -1,6 +1,8 @@
-using Random: shuffle!
-using StatsBase: sample!
-using IterTools: subsets
+module OptimSubset
+
+import Random, StatsBase, IterTools
+
+export max_subset, min_subset, max_subset_iter, min_subset_iter, dist_subset, dist_subset_rand
 
 max_subset = function(func, length_sub, length_range; keep = 1)
 
@@ -14,7 +16,7 @@ max_subset = function(func, length_sub, length_range; keep = 1)
         out_list[ind] = (val_max, Vector{Int}(undef, length_sub))
     end
 
-    for sub in subsets(1:length_range, length_sub)
+    for sub in IterTools.subsets(1:length_range, length_sub)
 
         val = func(sub)
 
@@ -61,7 +63,7 @@ min_subset = function(func, length_sub, length_range; keep = 1)
         out_list[ind] = (val_min, Vector{Int}(undef, length_sub))
     end
 
-    for sub in subsets(1:length_range, length_sub)
+    for sub in IterTools.subsets(1:length_range, length_sub)
 
         val = func(sub)
 
@@ -122,7 +124,7 @@ max_subset_iter = function(func, length_sub, length_range; reps = 1, keep = 1, i
 
     for _ in 1:reps
 
-        shuffle!(range_perm)
+        Random.shuffle!(range_perm)
 
         for ind in 1:length_sub
             sub[ind] = range_perm[ind]
@@ -226,7 +228,7 @@ min_subset_iter = function(func, length_sub, length_range; reps = 1, keep = 1, i
 
     for _ in 1:reps
 
-        shuffle!(range_perm)
+        Random.shuffle!(range_perm)
 
         for ind in 1:length_sub
             sub[ind] = range_perm[ind]
@@ -313,7 +315,7 @@ dist_subset = function(func, length_sub, length_range; lower, upper, num_bins)
 
     out_dist = zeros(Int, num_bins)
 
-    for sub in subsets(1:length_range, length_sub)
+    for sub in IterTools.subsets(1:length_range, length_sub)
         val = func(sub)
         out_dist[floor(Int, (val-lower)/(upper-lower)*num_bins)+1] += val >= lower && val < upper
     end
@@ -332,10 +334,12 @@ dist_subset_rand = function(func, length_sub, length_range; lower, upper, num_bi
 
     for ind in 1:reps
 
-        sample!(1:length_range, sub)
+        StatsBase.sample!(1:length_range, sub)
         val = func(sub)
         val >= lower && val < upper && (out_dist[floor(Int, (val-lower)/(upper-lower)*num_bins)+1] += 1)
     end
 
     return out_dist, out_bin
+end
+
 end

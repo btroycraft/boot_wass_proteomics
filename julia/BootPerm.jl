@@ -1,6 +1,8 @@
-using StatsBase: sample!
-using Random: shuffle!
-using Statistics: var
+module BootPerm
+
+import StatsBase, Random, Statistics
+
+export split_groups, boot_reps, perm_cor, split_train, boot_reps_train
 
 split_groups = function(group_lab_vec)
   group_enum = collect(enumerate(group_lab_vec))
@@ -30,7 +32,7 @@ boot_reps = function(boot_reps, group_list)
 
       @label LOOP_START
 
-      sample!(group, vec_samp;
+      StatsBase.sample!(group, vec_samp;
         replace = true)
 
       all(vec_samp[ind] == vec_samp[1] for ind in 2:length(group)) && @goto LOOP_START
@@ -42,21 +44,6 @@ boot_reps = function(boot_reps, group_list)
   end
 
   return out
-end
-
-boot_reps_cor_! = @inline function(group, group_vec, data_mat, range, vec_x = Vector{Float64}(undef, length(group)), vec_samp = Vector{Int}(undef, length(group)))
-
-  @label LOOP_START
-  sample!(group, vec_samp;
-    replace = true)
-
-  for ind_range in 1:length(range)
-    for ind_samp in 1:length(group)
-      @inbounds vec_x[ind_samp] = data_mat[group_vec[vec_samp[ind_samp]], range[ind_range]]
-    end
-
-    iszero(var(vec_x)) && @goto LOOP_START
-  end
 end
 
 perm_cor = function(perm_reps, group_list, group_vec, data_mat, range)
@@ -78,10 +65,10 @@ perm_cor = function(perm_reps, group_list, group_vec, data_mat, range)
   return out
 end
 
-perm_cor_! = @inline function(group_list, group_vec, data_mat, range, vec_x_list, vec_samp)
+perm_cor_! =  function(group_list, group_vec, data_mat, range, vec_x_list, vec_samp)
 
   @label LOOP_START
-  shuffle!(vec_samp)
+  Random.shuffle!(vec_samp)
 
   for ind_group in 1:length(group_list)
 
@@ -93,7 +80,7 @@ perm_cor_! = @inline function(group_list, group_vec, data_mat, range, vec_x_list
         @inbounds vec_x[ind_samp] = data_mat[group_vec[vec_samp[group[ind_samp]]], range[ind_range]]
       end
 
-      iszero(var(vec_x)) && @goto LOOP_START
+      iszero(Statistics.var(vec_x)) && @goto LOOP_START
     end
   end
 end
@@ -133,12 +120,12 @@ split_train = function(train_reps, train_size, test_size, group_list, group_vec,
   return out_train, out_test, out_lab, out_mat
 end
 
-split_train_! = @inline function(group_list, group_vec, train_size, test_size, data_mat, range, vec_samp_list, vec_samp_train_list, vec_samp_test, vec_x_train_list, vec_x_test)
+split_train_! =  function(group_list, group_vec, train_size, test_size, data_mat, range, vec_samp_list, vec_samp_train_list, vec_samp_test, vec_x_train_list, vec_x_test)
 
   @label LOOP_START
 
   for vec_samp in vec_samp_list
-    shuffle!(vec_samp)
+    Random.shuffle!(vec_samp)
   end
 
   lab_test = rand(1:length(group_list))
@@ -153,7 +140,7 @@ split_train_! = @inline function(group_list, group_vec, train_size, test_size, d
       vec_x_test[ind_samp] = data_mat[group_vec[vec_samp_test[ind_samp]], range[ind_range]]
     end
 
-    iszero(var(vec_x_test)) && @goto LOOP_START
+    iszero(Statistics.var(vec_x_test)) && @goto LOOP_START
   end
 
   for ind_group in 1:length(group_list)
@@ -171,7 +158,7 @@ split_train_! = @inline function(group_list, group_vec, train_size, test_size, d
         vec_x_train[ind_samp] = data_mat[group_vec[vec_samp_train[ind_samp]], range[ind_range]]
       end
 
-      iszero(var(vec_x_train)) && @goto LOOP_START
+      iszero(Statistics.var(vec_x_train)) && @goto LOOP_START
     end
   end
 
@@ -180,18 +167,22 @@ end
 
 boot_reps_train = function(boot_reps, train_list, test)
 
-  out_mat = Matrix{Int}(undef, sum([length(train) for train in train_list]) + length(test), boot_reps)
+  out = Matrix{Int}(undef, sum([length(train) for train in train_list]) + length(test), boot_reps)
 
   vec_samp_train_list = [Vector{Int}(undef, length(train)) for train in train_list]
   vec_samp_test = Vector{Int}(undef, length(test))
 
   for ind_boot in 1:boot_reps
 
-    sample!(test, vec_samp_test;
+    @label LOOP_START_TEST
+
+    StatsBase.sample!(test, vec_samp_test;
       replace = true)
 
+    all(vec_samp_test[ind] == vec_samp_test[1] for ind in 2:length(test)) && @goto LOOP_START_TEST
+
     for ind_samp in 1:length(test)
-      out_mat[test[ind_samp], ind_boot] = vec_samp_test[ind_samp]
+      out[test[ind_samp], ind_boot] = vec_samp_test[ind_samp]
     end
 
     for ind_group in 1:length(train_list)
@@ -199,14 +190,20 @@ boot_reps_train = function(boot_reps, train_list, test)
       train = train_list[ind_group]
       vec_samp_train = vec_samp_train_list[ind_group]
 
-      sample!(train, vec_samp_train;
+      @label LOOP_START_TRAIN
+
+      StatsBase.sample!(train, vec_samp_train;
         replace = true)
 
-      for ind_samp in 1:length(test)
-        out_mat[train[ind_samp], ind_boot] = vec_samp_train[ind_samp]
+      all(vec_samp_train[ind] == vec_samp_train[1] for ind in 2:length(train)) && @goto LOOP_START_TRAIN
+
+      for ind_samp in 1:length(train)
+        out[train[ind_samp], ind_boot] = vec_samp_train[ind_samp]
       end
     end
   end
 
-  return out_mat
+  return out
+end
+
 end
