@@ -1,8 +1,8 @@
 module WassBootCor
 
-import Statistics
+using Statistics, LIBSVM
 
-export wbc_mat, cor_mat, wbc_cv, cor_cv
+export wbc_mat, cor_mat, wbc_cv, cor_cv, svm_close
 
 wbc_mat = function(boot_reps, group_list, group_vec, data_mat, range, boot_mat; wp, trans)
 
@@ -50,7 +50,7 @@ wbc_pw =  function(ind1, ind2, boot_reps, group_list, group_vec, data_mat, range
         vec_x2[ind_samp] = data_mat[group_vec[boot_mat[group[ind_samp], ind_boot_col]], range[ind2]]
       end
 
-      val = trans == true ? atanh(Statistics.cor(vec_x1, vec_x2)) : Statistics.cor(vec_x1, vec_x2)
+      val = trans == true ? atanh(cor(vec_x1, vec_x2)) : cor(vec_x1, vec_x2)
 
       isnan(val) || isinf(val) && @goto LOOP_START
 
@@ -68,10 +68,10 @@ wbc_pw =  function(ind1, ind2, boot_reps, group_list, group_vec, data_mat, range
     end
 
     if wp == 1
-      vec_calc .-= Statistics.median(vec_calc)
+      vec_calc .-= median(vec_calc)
       vec_calc .= abs.(vec_calc)
     elseif wp == 2
-      vec_calc .-= Statistics.mean(vec_calc)
+      vec_calc .-= mean(vec_calc)
       vec_calc .= vec_calc.^2
     end
     out += sum(vec_calc)
@@ -115,14 +115,14 @@ cor_pw =  function(ind1, ind2, group_list, group_vec, data_mat, range, vec_x1_li
       vec_x2[ind_samp] = data_mat[group_vec[group[ind_samp]], range[ind2]]
     end
 
-    vec_calc[ind_group] = trans == true ? atanh(Statistics.cor(vec_x1, vec_x2)) : Statistics.cor(vec_x1, vec_x2)
+    vec_calc[ind_group] = trans == true ? atanh(cor(vec_x1, vec_x2)) : cor(vec_x1, vec_x2)
   end
 
   if lp == 1
-    vec_calc .-= Statistics.median(vec_calc)
+    vec_calc .-= median(vec_calc)
     vec_calc .= abs.(vec_calc)
   elseif lp == 2
-    vec_calc .-= Statistics.mean(vec_calc)
+    vec_calc .-= mean(vec_calc)
     vec_calc .= vec_calc.^2
   end
   out = sum(vec_calc) / length(group_list)
@@ -134,7 +134,7 @@ wbc_perm_close = function(group_list, group_vec, data_mat, range, boot_mat, perm
 
   group_vec_perm = copy(group_vec)
 
-  vec_x1_list = [Vector{Float64}(undef, size(group, 1)) for group in 1:length(group_list)]
+  vec_x1_list = [Vector{Float64}(undef, length(group)) for group in group_list]
   vec_x2_list = deepcopy(vec_x1_list)
 
   vec_cor = Vector{Float64}(undef, size(boot_mat, 2))
@@ -222,7 +222,7 @@ wbc_cv = function(sub, boot_reps, train_list, test, test_lab, train_mat, group_v
 
   end
 
-  return Statistics.mean(vec_succ)
+  return mean(vec_succ)
 end
 
 wbc_cv_ = function(sub, boot_reps, train_list, test, test_lab, train_vec, group_vec, data_mat, range, boot_mat, vec_x1_test, vec_x2_test, vec_x1_train_list, vec_x2_train_list, cor_vec_test, cor_vec_train, vec_sep, vec_vote; wp, trans)
@@ -240,11 +240,11 @@ wbc_cv_ = function(sub, boot_reps, train_list, test, test_lab, train_vec, group_
         ind_boot_col == size(boot_mat, 2) && return 0
 
         for ind_samp in 1:length(test)
-          vec_x1_test[ind_samp] = data_mat[group_vec[train_vec[boot_mat[test[ind_samp], ind_boot_col]]], range[ind_1]]
-          vec_x2_test[ind_samp] = data_mat[group_vec[train_vec[boot_mat[test[ind_samp], ind_boot_col]]], range[ind_2]]
+          vec_x1_test[ind_samp] = data_mat[group_vec[train_vec[boot_mat[test[ind_samp], ind_boot_col]]], range[sub[ind_1]]]
+          vec_x2_test[ind_samp] = data_mat[group_vec[train_vec[boot_mat[test[ind_samp], ind_boot_col]]], range[sub[ind_2]]]
         end
 
-        cor_test = trans == true ? atanh(Statistics.cor(vec_x1_test, vec_x2_test)) : Statistics.cor(vec_x1_test, vec_x2_test)
+        cor_test = trans == true ? atanh(cor(vec_x1_test, vec_x2_test)) : cor(vec_x1_test, vec_x2_test)
 
         (isnan(cor_test) || isinf(cor_test)) && @goto LOOP_START_TEST
 
@@ -271,7 +271,7 @@ wbc_cv_ = function(sub, boot_reps, train_list, test, test_lab, train_vec, group_
             vec_x2_train[ind_samp] = data_mat[group_vec[train_vec[boot_mat[train[ind_samp], ind_boot_col]]], range[sub[ind_2]]]
           end
 
-          cor_train = trans == true ? atanh(Statistics.cor(vec_x1_train, vec_x2_train)) : Statistics.cor(vec_x1_train, vec_x2_train)
+          cor_train = trans == true ? atanh(cor(vec_x1_train, vec_x2_train)) : cor(vec_x1_train, vec_x2_train)
 
           (isnan(cor_train) || isinf(cor_train)) && @goto LOOP_START_TRAIN
 
@@ -321,10 +321,9 @@ cor_cv = function(sub, train_list, test, test_lab, train_mat, group_vec, data_ma
 
     val = cor_cv_(sub, train_list, test, test_lab, train_vec, group_vec, data_mat, range, vec_x1_test, vec_x2_test, vec_x1_train_list, vec_x2_train_list, vec_sep, vec_vote; lp, trans)
     vec_succ[ind_train] = test_lab[ind_train] == val
-
   end
 
-  return Statistics.mean(vec_succ)
+  return mean(vec_succ)
 end
 
 cor_cv_ = function(sub, train_list, test, test_lab, train_vec, group_vec, data_mat, range, vec_x1_test, vec_x2_test, vec_x1_train_list, vec_x2_train_list, vec_sep, vec_vote; lp, trans)
@@ -338,7 +337,7 @@ cor_cv_ = function(sub, train_list, test, test_lab, train_vec, group_vec, data_m
         vec_x2_test[ind_samp] = data_mat[group_vec[train_vec[test[ind_samp]]], range[sub[ind_2]]]
       end
 
-      cor_test = trans == true ? atanh(Statistics.cor(vec_x1_test, vec_x2_test)) : Statistics.cor(vec_x1_test, vec_x2_test)
+      cor_test = trans == true ? atanh(cor(vec_x1_test, vec_x2_test)) : cor(vec_x1_test, vec_x2_test)
 
       for ind_group in 1:length(train_list)
         train = train_list[ind_group]
@@ -346,11 +345,11 @@ cor_cv_ = function(sub, train_list, test, test_lab, train_vec, group_vec, data_m
         vec_x2_train = vec_x2_train_list[ind_group]
 
         for ind_samp in 1:length(train)
-          vec_x1_train[ind_samp] = data_mat[group_vec[train_vec[train[ind_samp]]], range[ind_1]]
-          vec_x2_train[ind_samp] = data_mat[group_vec[train_vec[train[ind_samp]]], range[ind_2]]
+          vec_x1_train[ind_samp] = data_mat[group_vec[train_vec[train[ind_samp]]], range[sub[ind_1]]]
+          vec_x2_train[ind_samp] = data_mat[group_vec[train_vec[train[ind_samp]]], range[sub[ind_2]]]
         end
 
-        cor_train = trans == true ? atanh(Statistics.cor(vec_x1_train, vec_x2_train)) : Statistics.cor(vec_x1_train, vec_x2_train)
+        cor_train = trans == true ? atanh(cor(vec_x1_train, vec_x2_train)) : cor(vec_x1_train, vec_x2_train)
 
         vec_sep[ind_group] = abs(cor_train - cor_test)
       end
@@ -361,6 +360,48 @@ cor_cv_ = function(sub, train_list, test, test_lab, train_vec, group_vec, data_m
   end
 
   return findmax([sum([vote == x for vote in vec_vote]) for x in 1:length(train_list)])[2]
+end
+
+svm_close = function(group_list, group_vec, data_mat, range, boot_mat, sub_size)
+
+  vec_x1_list = [Vector{Float64}(undef, length(group)) for group in group_list]
+  vec_x2_list = deepcopy(vec_x1_list)
+
+  vec_cor_mat = Matrix{Float64}(undef, binomial(sub_size, 2), length(group_list)*size(boot_mat, 2))
+
+  labels = repeat(1:length(group_list); inner = size(boot_mat, 2))
+
+  return function(sub)
+
+    for ind_group in 1:length(group_list)
+
+      group = group_list[ind_group]
+      vec_x1 = vec_x1_list[ind_group]
+      vec_x2 = vec_x2_list[ind_group]
+
+      ind_count = 1
+      for ind1 in 1:length(sub)
+        for ind2 in (ind1+1):length(sub)
+
+          for ind_boot in 1:size(boot_mat, 2)
+            for ind_samp in 1:length(group)
+              vec_x1[ind_samp] = data_mat[group_vec[boot_mat[group[ind_samp], ind_boot]], range[ind1]]
+              vec_x2[ind_samp] = data_mat[group_vec[boot_mat[group[ind_samp], ind_boot]], range[ind2]]
+            end
+
+            vec_cor_mat[ind_count, (ind_group-1)*size(boot_mat, 2) + ind_boot] = cor(vec_x1, vec_x2)
+          end
+
+          ind_count += 1
+        end
+      end
+    end
+
+    model = svmtrain(vec_cor_mat, labels)
+    (p_lab, dec) = svmpredict(model, vec_cor_mat)
+
+    return mean(p_lab .== labels)
+  end
 end
 
 end

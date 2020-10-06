@@ -4,7 +4,7 @@ import Random, StatsBase, IterTools
 
 export max_subset, min_subset, max_subset_iter, min_subset_iter, dist_subset, dist_subset_rand
 
-max_subset = function(func, length_sub, length_range; keep = 1)
+max_subset = function(func, length_sub, length_range; keep = 1, show = false)
 
     # Gets global maximum by exhaustive search through subsets of range_arg. Requires a function that takes as input a set of indices. keep gives the number of top elements to return
 
@@ -31,6 +31,8 @@ max_subset = function(func, length_sub, length_range; keep = 1)
                 by = x->x[1])
 
             val_max = out_list[1][1]
+
+            show == true && @show val_max
         end
     end
 
@@ -51,7 +53,7 @@ max_subset = function(func, length_sub, length_range; keep = 1)
     return out_vec, out_mat
 end
 
-min_subset = function(func, length_sub, length_range; keep = 1)
+min_subset = function(func, length_sub, length_range; keep = 1, show = false)
 
     # Gets global minimum by exhaustive search through subsets of range_arg. Requires a function that takes as input a set of indices. keep gives the number of bottom elements to return
 
@@ -79,6 +81,8 @@ min_subset = function(func, length_sub, length_range; keep = 1)
                 rev = true)
 
             val_min = out_list[1][1]
+
+            show == true && @show val_min
         end
     end
 
@@ -99,7 +103,7 @@ min_subset = function(func, length_sub, length_range; keep = 1)
     return out_vec, out_mat
 end
 
-max_subset_iter = function(func, length_sub, length_range; reps = 1, keep = 1, iter = 1000)
+max_subset_iter = function(func, length_sub, length_range; reps = 1, keep = 1, iter = 1000, show = false)
 
     # Gets estimated maximum by iterative search through subsets of range_arg. Requires a function that takes as input a set of indices. keep gives the number of top elements to return. reps gives the number of randomly selected starting points
 
@@ -173,7 +177,9 @@ max_subset_iter = function(func, length_sub, length_range; reps = 1, keep = 1, i
                         sort!(out_list;
                             by = x->x[1])
 
-                        val_min_total = out_list[1][1]
+                        val_max_total = out_list[1][1]
+
+                        show == true && @show val_max_total
 
                         @label LOOP_EXIT
                     end
@@ -203,7 +209,7 @@ max_subset_iter = function(func, length_sub, length_range; reps = 1, keep = 1, i
     return out_vec, out_mat
 end
 
-min_subset_iter = function(func, length_sub, length_range; reps = 1, keep = 1, iter = 1000)
+min_subset_iter = function(func, length_sub, length_range; reps = 1, keep = 1, iter = 1000, show = false)
 
     # Gets estimated minimum by iterative search through subsets of range_arg. Requires a function that takes as input a set of indices. keep gives the number of top elements to return. reps gives the number of randomly selected starting points
 
@@ -215,7 +221,7 @@ min_subset_iter = function(func, length_sub, length_range; reps = 1, keep = 1, i
     sub = Vector{Int}(undef, length_sub)
     sub_temp = Vector{Int}(undef, length_sub)
 
-    val_min_total = val_min = val_min_sub = typemax(Float64)
+    val_min_total = val_min = val_min_sub = Inf
 
     ind_min_opt = ind_min_sub = 1
 
@@ -241,7 +247,7 @@ min_subset_iter = function(func, length_sub, length_range; reps = 1, keep = 1, i
 
         for _ in 1:iter
 
-            val_min_sub = typemin(Float64)
+            val_min_sub = -Inf
 
             for ind_old in 1:length_sub
 
@@ -279,6 +285,8 @@ min_subset_iter = function(func, length_sub, length_range; reps = 1, keep = 1, i
                             rev = true)
 
                         val_min_total = out_list[1][1]
+
+                        show == true && @show val_min_total
 
                         @label LOOP_EXIT
                     end
