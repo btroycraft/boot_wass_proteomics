@@ -103,217 +103,165 @@ min_subset = function(func, length_sub, length_range; keep = 1, show = false)
     return out_vec, out_mat
 end
 
-max_subset_iter = function(func, length_sub, length_range; reps = 1, keep = 1, iter = 1000, show = false)
+optim_subset_iter = function(func, length_sub, length_range; reps = 1, keep = 1, max_iter = 1000, type = "max", worker_ids = workers())
 
-    # Gets estimated maximum by iterative search through subsets of range_arg. Requires a function that takes as input a set of indices. keep gives the number of top elements to return. reps gives the number of randomly selected starting points
-
-    range_perm = vcat(1:length_range)
-
-    opt_size = length_range - length_sub
-
-    opt = Vector{Int}(undef, opt_size)
-    sub = Vector{Int}(undef, length_sub)
-    sub_temp = Vector{Int}(undef, length_sub)
-
-    val_max_total = val_max = val_max_sub = typemin(Float64)
-
-    ind_max_opt = ind_max_sub = 1
-
-    keep_out = 0
-
-    out_list = Vector{Tuple{Float64, Vector{Int}}}(undef, keep)
-    for ind in 1:keep
-        out_list[ind] = (val_max_total, zeros(Int, length_sub))
+    @everywhere worker_ids begin
+        optim_subset_iter_ = optim_subset_iter_close($func, $length_sub, $length_range, $keep, $max_iter, $type)
     end
 
-    for _ in 1:reps
+    keep_list = pmap(optim_subset_iter_, worker_ids, 1:reps)
 
-        Random.shuffle!(range_perm)
+    keep_out = min(keep, sum(map(length, keep_list)))
+    out_list = vcat(keep_out...)[1:keep_out]
 
-        for ind in 1:length_sub
-            sub[ind] = range_perm[ind]
-        end
-        for ind in 1:opt_size
-            opt[ind] = range_perm[ind + length_sub]
-        end
-
-        val_max = func(sub)
-
-        for _ in 1:iter
-
-            val_max_sub = typemin(Float64)
-
-            for ind_old in 1:length_sub
-
-                ind_swap = sub[ind_old]
-
-                for ind_new in 1:opt_size
-
-                    sub[ind_old] = opt[ind_new]
-
-                    val = func(sub)
-
-                    if val > val_max_sub
-                        val_max_sub = val
-                        ind_max_sub = ind_old
-                        ind_max_opt = ind_new
-                    end
-
-                    if val > val_max_total
-
-                        sub_temp .= sub
-                        sort!(sub_temp)
-
-                        for ind in 1:keep
-                            if sub_temp == out_list[ind][2]
-                                @goto LOOP_EXIT
-                            end
-                        end
-
-                        keep_out += keep_out < keep
-                        out_list[1] = (val, out_list[1][2])
-                        out_list[1][2] .= sub_temp
-
-                        sort!(out_list;
-                            by = x->x[1])
-
-                        val_max_total = out_list[1][1]
-
-                        show == true && @show val_max_total
-
-                        @label LOOP_EXIT
-                    end
-                end
-
-                sub[ind_old] = ind_swap
-            end
-
-            val_max_sub <= val_max && break
-
-            val_max = val_max_sub
-
-            (sub[ind_max_sub], opt[ind_max_opt]) = (opt[ind_max_opt], sub[ind_max_sub])
-        end
-    end
-
-    out_mat = Matrix{Int}(undef, length_sub, keep_out)
-    for ind in 1:keep_out
-        out_mat[:, ind] = out_list[keep-ind+1][2]
-    end
-
-    out_vec = Vector{Float64}(undef, keep_out)
-    for ind in 1:keep_out
-        out_vec[ind] = out_list[keep-ind+1][1]
-    end
-
-    return out_vec, out_mat
+    return out_list
 end
 
-min_subset_iter = function(func, length_sub, length_range; reps = 1, keep = 1, iter = 1000, show = false)
+optim_subset_iter_close = function(func, length_sub, length_range, keep, max_iter, type)
 
-    # Gets estimated minimum by iterative search through subsets of range_arg. Requires a function that takes as input a set of indices. keep gives the number of top elements to return. reps gives the number of randomly selected starting points
-
-    range_perm = vcat(1:length_range)
-
-    opt_size = length_range - length_sub
-
-    opt = Vector{Int}(undef, opt_size)
+    length_opt = length_range - length_sub
+    range_perm = collect(1:length_range)
     sub = Vector{Int}(undef, length_sub)
-    sub_temp = Vector{Int}(undef, length_sub)
+    opt = Vector{Int}(undef, length_range - length_sub)
 
-    val_min_total = val_min = val_min_sub = Inf
+    if type == "max"
+        return function()
 
-    ind_min_opt = ind_min_sub = 1
+            out_list = Vector{Tuple{Float64, Vector{Int}}}(undef, 0)
 
-    keep_out = 0
+            Random.shuffle!(range_perm)
 
-    out_list = Vector{Tuple{Float64, Vector{Int}}}(undef, keep)
-    for ind in 1:keep
-        out_list[ind] = (val_min_total, Vector{Int}(undef, length_sub))
+            for ind in 1:length_sub
+                sub[ind] = range_perm[ind]
+            end
+            for ind in 1:length_opt
+                opt[ind] = range_perm[length_sub + ind]
+            end
+
+            for _ in 1:max_iter
+                osi_inner_max_(func, sub, opt, out_list. keep)
+            end
+
+            return out_list
+        end
+    elseif type == "min"
+        return function()
+
+            out_list = Vector{Tuple{Float64, Vector{Int}}}(undef, 0)
+
+            Random.shuffle!(range_perm)
+
+            for ind in 1:length_sub
+                sub[ind] = range_perm[ind]
+            end
+            for ind in 1:length_opt
+                opt[ind] = range_perm[length_sub + ind]
+            end
+
+            for _ in 1:max_iter
+                osi_inner_min_(func, sub, opt, out_list. keep)
+            end
+
+            return out_list
+        end
     end
+end
 
-    for _ in 1:reps
+osi_inner_max_ = function(func, sub, opt, out_list, keep)
 
-        Random.shuffle!(range_perm)
+    Random.shuffle!(sub)
+    Random.shuffle!(opt)
 
-        for ind in 1:length_sub
-            sub[ind] = range_perm[ind]
-        end
-        for ind in 1:opt_size
-            opt[ind] = range_perm[ind + length_sub]
-        end
+    sub_temp = copy(sub)
 
-        val_min = func(sub)
+    for ind_old in 1:length(sub)
+        for ind_new in 1:length(opt)
 
-        for _ in 1:iter
+            sub_temp[ind_old] = opt[ind_new]
 
-            val_min_sub = -Inf
+            val = func(sub_temp)
 
-            for ind_old in 1:length_sub
+            if length(out_list) == 0 || val > out_list[1][1]
 
-                ind_swap = sub[ind_old]
+                sort!(sub_temp)
 
-                for ind_new in 1:opt_size
-
-                    sub[ind_old] = opt[ind_new]
-
-                    val = func(sub)
-
-                    if val < val_min_sub
-                        val_min_sub = val
-                        ind_min_sub = ind_old
-                        ind_min_opt = ind_new
-                    end
-
-                    if val < val_min_total
-
-                        sub_temp .= sub
-                        sort!(sub_temp)
-
-                        for ind in 1:keep
-                            if sub_temp == out_list[ind][2]
-                                @goto LOOP_EXIT
-                            end
-                        end
-
-                        keep_out += keep_out < keep
-                        out_list[1] = (val, out_list[1][2])
-                        out_list[1][2] .= sub_temp
-
-                        sort!(out_list;
-                            by = x->x[1],
-                            rev = true)
-
-                        val_min_total = out_list[1][1]
-
-                        show == true && @show val_min_total
-
-                        @label LOOP_EXIT
+                for ind in 1:length(out_list)
+                    if sub_temp == out_list[ind][2]
+                        @goto INNER_LOOP_END
                     end
                 end
 
-                sub[ind_old] = ind_swap
+                if length(out_list) < keep
+                    push!(out_list, (val, sub_temp))
+                else
+                    out_list[1] = (val, sub_temp)
+                end
+
+                sort!(out_list;
+                    by = x->x[1])
+
+                opt[ind_new] = sub[ind_old]
+                sub[ind_old] = sub_temp[ind_old]
+
+                return
             end
 
-            val_min_sub >= val_min && break
-
-            val_min = val_min_sub
-
-            (sub[ind_min_sub], opt[ind_min_opt]) = (opt[ind_min_opt], sub[ind_min_sub])
+            @label INNER_LOOP_END
         end
+
+        sub_temp[ind_old] = sub[ind_old]
     end
 
-    out_mat = Matrix{Int}(undef, length_sub, keep_out)
-    for ind in 1:keep_out
-        out_mat[:, ind] = out_list[keep-ind+1][2]
+    return
+end
+
+osi_inner_min_ = function(func, sub, opt, out_list, keep)
+
+    Random.shuffle!(sub)
+    Random.shuffle!(opt)
+
+    sub_temp = copy(sub)
+
+    for ind_old in 1:length(sub)
+        for ind_new in 1:length(opt)
+
+            sub_temp[ind_old] = opt[ind_new]
+
+            val = func(sub_temp)
+
+            if length(out_list) == 0 || val < out_list[1][1]
+
+                sort!(sub_temp)
+
+                for ind in 1:length(out_list)
+                    if sub_temp == out_list[ind][2]
+                        @goto INNER_LOOP_END
+                    end
+                end
+
+                if length(out_list) < keep
+                    push!(out_list, (val, sub_temp))
+                else
+                    out_list[1] = (val, sub_temp)
+                end
+
+                sort!(out_list;
+                    by = x->x[1],
+                    rev = true)
+
+                opt[ind_new] = sub[ind_old]
+                sub[ind_old] = sub_temp[ind_old]
+
+                return
+            end
+
+            @label INNER_LOOP_END
+        end
+
+        sub_temp[ind_old] = sub[ind_old]
     end
 
-    out_vec = Vector{Float64}(undef, keep_out)
-    for ind in 1:keep_out
-        out_vec[ind] = out_list[keep-ind+1][1]
-    end
-
-    return out_vec, out_mat
+    return
 end
 
 dist_subset = function(func, length_sub, length_range; lower, upper, num_bins)
@@ -349,5 +297,7 @@ dist_subset_rand = function(func, length_sub, length_range; lower, upper, num_bi
 
     return out_dist, out_bin
 end
+
+
 
 end
