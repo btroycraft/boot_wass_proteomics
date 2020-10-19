@@ -1,31 +1,31 @@
-using CSV, DataFrames
+using CSV, DataFrames, Distributed
+Distributed.worker_timeout() = 300
 
-include("CorSep.jl")
-include("OptimSubset.jl")
-include("BootPerm.jl")
+WORKER_IDS = addprocs(4)
 
-using .CorSep, .OptimSubset, .BootPerm
+@everywhere begin
+    include("OptimSubset.jl")
+    include("BootPerm.jl")
+    include("CorSep.jl")
+end
+
+@everywhere using .OptimSubset, .BootPerm, .CorSep
 
 data_gill = DataFrame!(CSV.File("cDIA_MXLSAKBH-Exp1-2-3-4_Gill_r_format.csv"))
 
 DATA_MAT = convert(Matrix, select(data_gill, Not([:sample, :location])))
 (GROUP_LIST, GROUP_VEC) = split_groups(data_gill[:, :location])
-RANGE = DataFrame!(CSV.File("prot_indices.csv"))[:, :indices]
-RANGE_NAMES = names(select(data_gill, Not([:sample, :location])))[RANGE]
+PROTEINS = names(select(data_gill, Not([:sample, :location])))
 
-PERM_REPS = 1000
-PERM_MAT = perm_cor(PERM_REPS, GROUP_LIST, GROUP_VEC, DATA_MAT, RANGE)
+SUB_SIZE = 100
 
-KEEP = 100
+@everywhere cor_sep_sub = cor_sep_close($SUB_SIZE, $GROUP_LIST, $GROUP_VEC, $DATA_MAT;
+    trans = true)
 
-TRAIN_REPS = 1000
-TRAIN_SIZE = 16
-TEST_SIZE = 8
-(TRAIN_LIST, TEST, TEST_LAB, TRAIN_MAT) = split_train(TRAIN_REPS, TRAIN_SIZE, TEST_SIZE, GROUP_LIST, GROUP_VEC, DATA_MAT, RANGE)
-
-BOOT_REPS_TRAIN = 1000
-BOOT_MAT_TRAIN = boot_reps_train(100*BOOT_REPS_TRAIN, TRAIN_LIST, TEST)
-
-cor_sep_sub = cor_sep_close(100, GROUP_LIST, GROUP_VEC, DATA_MAT, RANGE)
-
-max_subset_iter(cor_sep_sub, 50, length(RANGE); reps = 20, keep = 20, iter = 10, show = true)
+max_list = optim_subset_iter(x -> cor_sep_sub(x), SUB_SIZE, size(DATA_MAT, 2);
+    reps = 100,
+    keep = 20,
+    max_iter = 300,
+    type = "max",
+    worker_ids = workers())
+max_list

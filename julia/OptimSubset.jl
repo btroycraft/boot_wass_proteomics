@@ -1,8 +1,8 @@
 module OptimSubset
 
-import Random, StatsBase, IterTools
+using Random, StatsBase, IterTools, Distributed, ParallelDataTransfer
 
-export max_subset, min_subset, max_subset_iter, min_subset_iter, dist_subset, dist_subset_rand
+export max_subset, min_subset, optim_subset_iter, optim_subset_iter_close, dist_subset, dist_subset_rand
 
 max_subset = function(func, length_sub, length_range; keep = 1, show = false)
 
@@ -105,14 +105,22 @@ end
 
 optim_subset_iter = function(func, length_sub, length_range; reps = 1, keep = 1, max_iter = 1000, type = "max", worker_ids = workers())
 
-    @everywhere worker_ids begin
-        optim_subset_iter_ = optim_subset_iter_close($func, $length_sub, $length_range, $keep, $max_iter, $type)
-    end
+    @everywhere worker_ids optim_subset_iter_ = optim_subset_iter_close($func, $length_sub, $length_range, $keep, $max_iter, $type)
 
-    keep_list = pmap(optim_subset_iter_, worker_ids, 1:reps)
+    @everywhere worker_ids[1] keep_list = pmap(_ -> optim_subset_iter_(), WorkerPool($worker_ids), 1:$reps)
+    keep_list = @getfrom worker_ids[1] keep_list
 
     keep_out = min(keep, sum(map(length, keep_list)))
-    out_list = vcat(keep_out...)[1:keep_out]
+    out_list = vcat(keep_list...)[1:keep_out]
+
+    if type == "max"
+        sort!(out_list;
+            by = x -> x[1])
+    elseif type == "min"
+        sort!(out_list;
+            by = x -> x[1],
+            rev = true)
+    end
 
     return out_list
 end
@@ -129,7 +137,7 @@ optim_subset_iter_close = function(func, length_sub, length_range, keep, max_ite
 
             out_list = Vector{Tuple{Float64, Vector{Int}}}(undef, 0)
 
-            Random.shuffle!(range_perm)
+            shuffle!(range_perm)
 
             for ind in 1:length_sub
                 sub[ind] = range_perm[ind]
@@ -139,7 +147,7 @@ optim_subset_iter_close = function(func, length_sub, length_range, keep, max_ite
             end
 
             for _ in 1:max_iter
-                osi_inner_max_(func, sub, opt, out_list. keep)
+                osi_inner_max_(func, sub, opt, out_list, keep)
             end
 
             return out_list
@@ -149,7 +157,7 @@ optim_subset_iter_close = function(func, length_sub, length_range, keep, max_ite
 
             out_list = Vector{Tuple{Float64, Vector{Int}}}(undef, 0)
 
-            Random.shuffle!(range_perm)
+            shuffle!(range_perm)
 
             for ind in 1:length_sub
                 sub[ind] = range_perm[ind]
@@ -159,7 +167,7 @@ optim_subset_iter_close = function(func, length_sub, length_range, keep, max_ite
             end
 
             for _ in 1:max_iter
-                osi_inner_min_(func, sub, opt, out_list. keep)
+                osi_inner_min_(func, sub, opt, out_list, keep)
             end
 
             return out_list
@@ -169,8 +177,8 @@ end
 
 osi_inner_max_ = function(func, sub, opt, out_list, keep)
 
-    Random.shuffle!(sub)
-    Random.shuffle!(opt)
+    shuffle!(sub)
+    shuffle!(opt)
 
     sub_temp = copy(sub)
 
@@ -217,8 +225,8 @@ end
 
 osi_inner_min_ = function(func, sub, opt, out_list, keep)
 
-    Random.shuffle!(sub)
-    Random.shuffle!(opt)
+    shuffle!(sub)
+    shuffle!(opt)
 
     sub_temp = copy(sub)
 
