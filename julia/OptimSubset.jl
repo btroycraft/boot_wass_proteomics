@@ -81,8 +81,6 @@ min_subset = function(func, length_sub, length_range; keep = 1, show = false)
                 rev = true)
 
             val_min = out_list[1][1]
-
-            show == true && @show val_min
         end
     end
 
@@ -103,15 +101,13 @@ min_subset = function(func, length_sub, length_range; keep = 1, show = false)
     return out_vec, out_mat
 end
 
-optim_subset_iter = function(func, length_sub, length_range; reps = 1, keep = 1, max_iter = 1000, type = "max", worker_ids = workers())
+optim_subset_iter = function(func, length_sub, length_range; reps = 1, keep = 1, max_iter = 1000, type = "max", show = false)
 
-    @everywhere worker_ids optim_subset_iter_ = optim_subset_iter_close($func, $length_sub, $length_range, $keep, $max_iter, $type)
+    optim_subset_iter_ = optim_subset_iter_close(func, length_sub, length_range, keep, max_iter, type, show)
 
-    @everywhere worker_ids[1] keep_list = pmap(_ -> optim_subset_iter_(), WorkerPool($worker_ids), 1:$reps)
-    keep_list = @getfrom worker_ids[1] keep_list
-
+    keep_list = [optim_subset_iter_() for _ in 1:reps]
     keep_out = min(keep, sum(map(length, keep_list)))
-    out_list = vcat(keep_list...)[1:keep_out]
+    out_list = vcat(keep_list...)
 
     if type == "max"
         sort!(out_list;
@@ -122,10 +118,10 @@ optim_subset_iter = function(func, length_sub, length_range; reps = 1, keep = 1,
             rev = true)
     end
 
-    return out_list
+    return out_list[1:keep_out]
 end
 
-optim_subset_iter_close = function(func, length_sub, length_range, keep, max_iter, type)
+optim_subset_iter_close = function(func, length_sub, length_range, keep, max_iter, type, show)
 
     length_opt = length_range - length_sub
     range_perm = collect(1:length_range)
