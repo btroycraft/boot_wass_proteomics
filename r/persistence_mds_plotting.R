@@ -1,4 +1,5 @@
 setwd("C:/Users/jamsh/OneDrive/Desktop/RTG_proteomics_Local/boot_wass_proteomics-master/r")
+
 library(TDA)
 library(MASS)
 library(ggplot2)
@@ -9,7 +10,7 @@ library(igraph)
 
 data <- read.table('cDIA_MXLSAKBH-Exp1-2-3-4_Gill_r_format.csv', header=TRUE, sep=',')
 
-#sub_inds <- read.csv("selected_subsets.csv", header = FALSE)
+sub_inds <- read.csv("../julia/selected_subsets.csv", header = FALSE)
 
 
 
