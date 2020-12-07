@@ -13,14 +13,12 @@ data <- read.table('cDIA_MXLSAKBH-Exp1-2-3-4_Gill_r_format.csv', header=TRUE, se
 sub_inds <- read.csv("../julia/selected_subsets.csv", header = FALSE)
 
 
-
 ind_vec = as.vector(unlist(sub_inds[1])) + 2
 
 sub_prots = cbind(data[ind_vec], location = data$location)
 
 
 corrs_by_env = by(sub_prots[1:100], sub_prots$location, FUN = cor)
-
 
 matrix_ones = matrix(rep(1, 100*100), 100, 100)
 
@@ -298,7 +296,77 @@ edge_colors = ifelse(abs(vec_corrs_ak) > 0.8, "red2", ifelse(abs(vec_corrs_ak) <
 coords = layout_in_circle(net, order = V(net))
 plot(net, edge.color = edge_colors, layout = coords, main = "Alaska Network")
 
+plot.network.frame <- function(cor_list, thresh_lim = c(-1, 1), num_frames = 10^3, dir ='.', lw = 1){
+  
+  location_names <- names(cor_list)
+  
+  thresh_seq <- seq(max(thresh_lim), min(thresh_lim), length.out = num_frames)
+  
+  for(ind_thresh in 1:num_frames){
+    
+    thresh <- thresh_seq[ind_thresh]
+  
+    png(sprintf('%s/network_plot%04d.png', dir, ind_thresh), 1920, 1080)
+      
+      par(mfrow = c(2, 2))
+      
+      for(loc in location_names){
+        
+        cor_mat <- cor_list[[loc]]
+        
+        protein_names <- colnames(cor_mat)
+        
+        comb_pairs = combn(protein_names, 2)
+        name_pairs = apply(comb_pairs, 2, paste, collapse="-")
+        edge_vec = unlist(strsplit(name_pairs, split = "-"))
+        
+        net <- igraph::graph(edges = edge_vec, directed = F)
+        cor_vec <- cor_mat[lower.tri(cor_mat)]
+        weight_vec <- pmax(cor_vec - thresh, 0) 
+        
+        igraph::E(net)$width = weight_vec * lw + 3
+        
+        col_1 <- col2rgb('light gray')/255
+        col_2 <- col2rgb('red')/255
+        
+        edge_colors <- sapply(1:length(weight_vec), function(ind){
+          
+          alpha <- weight_vec[ind] / (1 - min(thresh_lim))
+          
+          col_rgb <- (1-alpha)*col_1 + alpha*col_2
+          col <- rgb(col_rgb[1], col_rgb[2], col_rgb[3])
+          if(cor_vec[ind] < thresh) col <- '#ffffff00'
+          
+          return( col )
+        })
+        
+        coords = igraph::layout_in_circle(net, order = igraph::V(net))
+        plot(net, edge.color = edge_colors, layout = coords, main = loc)
+      }
+    title(sprintf('Correlation Threshold: %3f', round(thresh, 1)), outer = TRUE, cex = 2)
+    dev.off()
+  }
+}
 
+data_list <- split(data[, !(colnames(data) %in% c('sample', 'location'))], data$location)
+loc_list <- names(data_list)
+cor_list <- lapply(data_list, cor)
+
+mp_prot_list <- list(bh_mostpers[[7]], m_mostpers[[1]], ls_mostpers[[1]], ak_mostpers[[1]])
+names(mp_prot_list) <- loc_list
+
+lw_list <- c(5, 5, 5, 5)
+names(lw_list) <- loc_list
+
+for(loc in loc_list){
+  dir <- sprintf('net_%s', loc)
+  if(!dir.exists(dir)) dir.create(dir)
+  
+  cor_list_temp <- lapply(cor_list, function(cor_mat){
+    cor_mat[mp_prot_list[[loc]], mp_prot_list[[loc]]]})
+  
+  plot.network.frame(cor_list_temp, num_frames = 10, dir = dir, lw = lw_list[loc])
+}
 
 #Create and plot network Bodega Harbor
 net <- graph(edges = edge_vec, directed = F)
