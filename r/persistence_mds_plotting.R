@@ -308,7 +308,7 @@ plot.network.frame <- function(cor_list, thresh_lim = c(-1, 1), num_frames = 10^
   
     png(sprintf('%s/network_plot%04d.png', dir, ind_thresh), 1920, 1080)
       
-      par(mfrow = c(2, 2))
+      par(mfrow = c(2, 2), cex.main = 2.5)
       
       for(loc in location_names){
         
@@ -340,10 +340,12 @@ plot.network.frame <- function(cor_list, thresh_lim = c(-1, 1), num_frames = 10^
           return( col )
         })
         
+        V(net)$label.cex <- 1
+        
         coords = igraph::layout_in_circle(net, order = igraph::V(net))
         plot(net, edge.color = edge_colors, layout = coords, main = loc)
       }
-    title(sprintf('Correlation Threshold: %3f', round(thresh, 1)), outer = TRUE, cex = 2)
+    title(sprintf('Correlation Threshold: %3f', round(thresh, 1)), outer = TRUE)
     dev.off()
   }
 }
@@ -355,7 +357,7 @@ cor_list <- lapply(data_list, cor)
 mp_prot_list <- list(bh_mostpers[[7]], m_mostpers[[1]], ls_mostpers[[1]], ak_mostpers[[1]])
 names(mp_prot_list) <- loc_list
 
-lw_list <- c(5, 5, 5, 5)
+lw_list <- c(4, 4, 4, 4)
 names(lw_list) <- loc_list
 
 for(loc in loc_list){
