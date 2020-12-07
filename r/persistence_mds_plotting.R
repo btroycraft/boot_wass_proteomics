@@ -4,13 +4,17 @@ library(MASS)
 library(ggplot2)
 library(gridExtra)
 library(grid)
+library(igraph)
 
 
 data <- read.table('cDIA_MXLSAKBH-Exp1-2-3-4_Gill_r_format.csv', header=TRUE, sep=',')
 
-sub_inds <- read.csv("selected_subsets.csv", header = FALSE)
+#sub_inds <- read.csv("selected_subsets.csv", header = FALSE)
+
+
 
 ind_vec = as.vector(unlist(sub_inds[1])) + 2
+
 sub_prots = cbind(data[ind_vec], location = data$location)
 
 
@@ -67,10 +71,11 @@ plot(diag_ls$diagram, main = "Lake Solano Persistence Diagram")
 # plot(diag_ls$diagram, barcode = TRUE, main = "Lake Solano Barcodes")
 
 
-Names = rownames(data.frame(fit$points))
+
 
 #Alaska MDS Plot
 fit = isoMDS(D_ak, k = 2)
+Names = rownames(data.frame(fit$points))
 mds_ak_p <- ggplot(data.frame(fit$points), aes(x = X1, y = X2, label = Names )) +
   geom_point() +
   geom_text(aes(label=Names),hjust=0, vjust=.5) + geom_jitter() +
@@ -108,21 +113,7 @@ g <- grid.arrange(mds_ak_p,mds_bh_p, mds_ls_p, mds_m_p,
 
 
 
-# fit = isoMDS(D_ak, k = 2)
-# mds_ak_p <- plot(fit$points, main = "Alaska MDS Plot", type = "n")
-# text(fit$points, labels = colnames(sub_prots), cex=.9)
-# 
-#fit = isoMDS(D_m, k = 2)
-# mds_m_p <-plot(fit$points, main = "Mexico MDS Plot", type = "n")
-# text(fit$points, labels = colnames(sub_prots), cex=.9)
-# 
-# fit = isoMDS(D_bh, k = 2)
-# mds_bh_p <- plot(fit$points, main = "Bodega Harbor MDS Plot", type = "n")
-# text(fit$points, labels = colnames(sub_prots), cex=.9)
-#
-#fit = isoMDS(D_ls, k = 2)
-# mds_ls_p <-plot(fit$points, main = "Lake Solano MDS Plot", type = "n")
-# text(fit$points, labels = colnames(sub_prots), cex=.9)
+
 
 #Most persistent features
 
@@ -205,15 +196,297 @@ ls_feature_prots <- sapply(lapply(get_feature_prots(loc_ls), paste, collapse = "
 
 
 #Create Data frames and write to csv file
-a <- data.frame(prots = ak_feature_prots, persistence.time = round(ripsd1.ak[, "Death"] - ripsd1.ak[, "Birth"], 4 ))
-write.csv(a, "alaska_most_persistent_prots.csv")
+# a <- data.frame(prots = ak_feature_prots, persistence.time = round(ripsd1.ak[, "Death"] - ripsd1.ak[, "Birth"], 4 ))
+# write.csv(a, "alaska_most_persistent_prots.csv")
+# 
+# b <- data.frame(prots = m_feature_prots, persistence.time = round(ripsd1.m[, "Death"] - ripsd1.m[, "Birth"], 4))
+# write.csv(b, "mexico_most_persistent_prots.csv")
+# 
+# c <- data.frame(prots = bh_feature_prots, persistence.time = round(ripsd1.bh[, "Death"] - ripsd1.bh[, "Birth"], 4))
+# write.csv(c, "bodega_most_persistent_prots.csv")
+# 
+# d <- data.frame(prots = ls_feature_prots, persistence.time = round(ripsd1.ls[, "Death"] - ripsd1.ls[, "Birth"], 4 ))
+# write.csv(d, "lakesolano_most_persistent_prots.csv")
+# 
 
-b <- data.frame(prots = m_feature_prots, persistence.time = round(ripsd1.m[, "Death"] - ripsd1.m[, "Birth"], 4))
-write.csv(b, "mexico_most_persistent_prots.csv")
 
-c <- data.frame(prots = bh_feature_prots, persistence.time = round(ripsd1.bh[, "Death"] - ripsd1.bh[, "Birth"], 4))
-write.csv(c, "bodega_most_persistent_prots.csv")
+#Plot the most persistent features by environment on an mds plot
 
-d <- data.frame(prots = ls_feature_prots, persistence.time = round(ripsd1.ls[, "Death"] - ripsd1.ls[, "Birth"] ))
-write.csv(d, "lakesolano_most_persistent_prots.csv")
+#Get the most persistent groups of proteins
+ak_mostpers <- get_feature_prots(loc_ak)[1:10]
+bh_mostpers <- get_feature_prots(loc_bh)[1:10]
+ls_mostpers <- get_feature_prots(loc_ls)[1:10]
+m_mostpers <- get_feature_prots(loc_m)[1:10]
+
+plot_mostpers_mds <- function(mostpers) {
+  lapply(mostpers, function(prots){
+    
+    if (length(prots) == 0){
+      NULL
+    } else{
+      a <- data.frame(cbind(sub_prots[prots], location = sub_prots$location))
+      corrs = by(a[1:(length(a) - 1)], a$location, FUN = cor)
+      n = dim(a)[2]
+      matrix_ones = matrix(rep(1, (n-1)*(n-1)), n-1, n-1)
+      dist_ak = matrix_ones - corrs$`Westchester Lagoon`
+      dist_ls = matrix_ones - corrs$`Lake Solano`
+      dist_m = matrix_ones - corrs$`Laguna de la Bocana del Rosaria`
+      dist_bh = matrix_ones - corrs$`Bodega Harbor`
+      
+      
+      fit = isoMDS(dist_ak, k = 2)
+      Names = rownames(data.frame(fit$points))
+      mds_ak_p <- ggplot(data.frame(fit$points), aes(x = X1, y = X2, label = Names )) +
+        geom_point() +
+        geom_text(aes(label=Names), hjust = 0, vjust=.5) + geom_jitter() +
+        ggtitle("Alaska MDS Plot") + xlim(-1,2.5) + ylim(-2.5, 2.5)
+      
+      fit = isoMDS(dist_bh, k = 2)
+      mds_bh_p <- ggplot(data.frame(fit$points), aes(x = X1, y = X2, label = Names )) +
+        geom_point() +
+        geom_text(aes(label=Names),hjust=0, vjust=.5) + geom_jitter() +
+        ggtitle("Bodega Harbor MDS Plot") + xlim(-1,1.4)+ ylim(-2.5, 2.5)
+      
+      fit = isoMDS(dist_ls, k = 2)
+      mds_ls_p <- ggplot(data.frame(fit$points), aes(x = X1, y = X2, label = Names )) +
+        geom_point() +
+        geom_text(aes(label=Names),hjust=0, vjust=.5) + geom_jitter() +
+        ggtitle("Lake Solano MDS Plot") + xlim(-1,1.4)+ ylim(-2.5, 2.5)
+      
+      fit = isoMDS(dist_m, k = 2)
+      mds_m_p <- ggplot(data.frame(fit$points), aes(x = X1, y = X2, label = Names )) +
+        geom_point() +
+        geom_text(aes(label=Names),hjust=0, vjust=.5) + geom_jitter() +
+        ggtitle("Mexico MDS Plot") + xlim(-2,3)+ ylim(-2.5, 2.5)
+      g <- grid.arrange(mds_ak_p,mds_bh_p, mds_ls_p, mds_m_p,
+                        ncol=2)
+      return(corrs)
+
+  }
+})
+}
+
+vec_cor <- function(df){
+  temp = df[1:ncol(df)]
+  temp[lower.tri(temp)]
+}
+
+plot_mostpers_mds(ak_mostpers[1])
+plot_mostpers_mds(bh_mostpers[7])
+plot_mostpers_mds(ls_mostpers[1])
+plot_mostpers_mds(m_mostpers[1])
+
+#------------------------------PLOT NETWORKS FOR EACH OF THE PERSISTENT SUBSETS-------------------
+
+
+
+##------------------------------------ALASKA MOST PERS------------------------------------------
+#PLot MDS
+a = plot_mostpers_mds(ak_mostpers[1])
+comb.pairs = combn(ak_mostpers[[1]],2)
+name.pairs = apply(comb.pairs, 2, paste, collapse="-")
+edge_vec = unlist(strsplit(name.pairs, split = "-"))
+
+par(mfrow = c(2,2))
+
+#Create and plot network Alaska
+net <- graph(edges = edge_vec, directed = F)
+vec_corrs_ak = vec_cor(data.frame(a[[1]]$`Westchester Lagoon`))
+E(net)$width = abs(vec_corrs_ak) * 6
+edge_colors = ifelse(abs(vec_corrs_ak) > 0.8, "red2", ifelse(abs(vec_corrs_ak) < 0.8 & abs(vec_corrs_ak) > 0.4, "orange2", "gray"))
+coords = layout_in_circle(net, order = V(net))
+plot(net, edge.color = edge_colors, layout = coords, main = "Alaska Network")
+
+
+
+#Create and plot network Bodega Harbor
+net <- graph(edges = edge_vec, directed = F)
+vec_corrs_bh = vec_cor(data.frame(a[[1]]$`Bodega Harbor`))
+E(net)$width = abs(vec_corrs_bh) * 6
+edge_colors = ifelse(abs(vec_corrs_bh) > 0.8, "red2", ifelse(abs(vec_corrs_bh) < 0.8 & abs(vec_corrs_bh) > 0.4, "orange2", "gray"))
+coords = layout_in_circle(net, order = V(net))
+plot(net, edge.color = edge_colors, layout = coords, main = "Bodega Network")
+
+
+#Create and plot network Lake Solano
+net <- graph(edges = edge_vec, directed = F)
+vec_corrs_ls = vec_cor(data.frame(a[[1]]$`Lake Solano`))
+E(net)$width = abs(vec_corrs_ls) * 6
+edge_colors = ifelse(abs(vec_corrs_ls) > 0.8, "red2", ifelse(abs(vec_corrs_ls) < 0.8 & abs(vec_corrs_ls) > 0.4, "orange2", "gray"))
+coords = layout_in_circle(net, order = V(net))
+plot(net, edge.color = edge_colors, layout = coords, main = "Lake Solano Network")
+
+
+#Create and plot network Mexico
+net <- graph(edges = edge_vec, directed = F)
+vec_corrs_m = vec_cor(data.frame(a[[1]]$`Laguna de la Bocana del Rosaria`))
+E(net)$width = abs(vec_corrs_m) * 6
+edge_colors = ifelse(abs(vec_corrs_m) > 0.8, "red2", ifelse(abs(vec_corrs_m) < 0.8 & abs(vec_corrs_m) > 0.4, "orange2", "gray"))
+coords = layout_in_circle(net, order = V(net))
+plot(net, edge.color = edge_colors, layout = coords, main = "Mexico Network")
+
+dev.off()
+
+##---------------------------------BODEGA MOST PERS----------------------------------------------
+#PLot MDS
+a = plot_mostpers_mds(bh_mostpers[7])
+comb.pairs = combn(bh_mostpers[[7]],2)
+name.pairs = apply(comb.pairs, 2, paste, collapse="-")
+edge_vec = unlist(strsplit(name.pairs, split = "-"))
+
+par(mfrow = c(2,2))
+
+#Create and plot network Alaska
+net <- graph(edges = edge_vec, directed = F)
+vec_corrs_ak = vec_cor(data.frame(a[[1]]$`Westchester Lagoon`))
+E(net)$width = abs(vec_corrs_ak) * 6
+edge_colors = ifelse(abs(vec_corrs_ak) > 0.8, "red2", ifelse(abs(vec_corrs_ak) < 0.8 & abs(vec_corrs_ak) > 0.4, "orange2", "gray"))
+coords = layout_in_circle(net, order = V(net))
+plot(net, edge.color = edge_colors, layout = coords, main = "Alaska Network")
+
+
+
+#Create and plot network Bodega Harbor
+net <- graph(edges = edge_vec, directed = F)
+vec_corrs_bh = vec_cor(data.frame(a[[1]]$`Bodega Harbor`))
+E(net)$width = abs(vec_corrs_bh) * 6
+edge_colors = ifelse(abs(vec_corrs_bh) > 0.8, "red2", ifelse(abs(vec_corrs_bh) < 0.8 & abs(vec_corrs_bh) > 0.4, "orange2", "gray"))
+coords = layout_in_circle(net, order = V(net))
+plot(net, edge.color = edge_colors, layout = coords, main = "Bodega Network")
+
+
+#Create and plot network Lake Solano
+net <- graph(edges = edge_vec, directed = F)
+vec_corrs_ls = vec_cor(data.frame(a[[1]]$`Lake Solano`))
+E(net)$width = abs(vec_corrs_ls) * 6
+edge_colors = ifelse(abs(vec_corrs_ls) > 0.8, "red2", ifelse(abs(vec_corrs_ls) < 0.8 & abs(vec_corrs_ls) > 0.4, "orange2", "gray"))
+coords = layout_in_circle(net, order = V(net))
+plot(net, edge.color = edge_colors, layout = coords, main = "Lake Solano Network")
+
+
+#Create and plot network Mexico
+net <- graph(edges = edge_vec, directed = F)
+vec_corrs_m = vec_cor(data.frame(a[[1]]$`Laguna de la Bocana del Rosaria`))
+E(net)$width = abs(vec_corrs_m) * 6
+edge_colors = ifelse(abs(vec_corrs_m) > 0.8, "red2", ifelse(abs(vec_corrs_m) < 0.8 & abs(vec_corrs_m) > 0.4, "orange2", "gray"))
+coords = layout_in_circle(net, order = V(net))
+plot(net, edge.color = edge_colors, layout = coords, main = "Mexico Network")
+
+
+##--------------------------------Lake Solano MOST PERS----------------------------------------
+#Find combinations of proteins
+a = plot_mostpers_mds(ls_mostpers[1])
+comb.pairs = combn(ls_mostpers[[1]],2)
+name.pairs = apply(comb.pairs, 2, paste, collapse="-")
+edge_vec = unlist(strsplit(name.pairs, split = "-"))
+
+par(mfrow = c(2,2))
+
+#Create and plot network Alaska
+net <- graph(edges = edge_vec, directed = F)
+vec_corrs_ak = vec_cor(data.frame(a[[1]]$`Westchester Lagoon`))
+E(net)$width = abs(vec_corrs_ak) * 6
+edge_colors = ifelse(abs(vec_corrs_ak) > 0.8, "red2", ifelse(abs(vec_corrs_ak) < 0.8 & abs(vec_corrs_ak) > 0.4, "orange2", "gray"))
+coords = layout_in_circle(net, order = V(net))
+plot(net, edge.color = edge_colors, layout = coords, main = "Alaska Network")
+
+
+
+#Create and plot network Bodega Harbor
+net <- graph(edges = edge_vec, directed = F)
+vec_corrs_bh = vec_cor(data.frame(a[[1]]$`Bodega Harbor`))
+E(net)$width = abs(vec_corrs_bh) * 6
+edge_colors = ifelse(abs(vec_corrs_bh) > 0.8, "red2", ifelse(abs(vec_corrs_bh) < 0.8 & abs(vec_corrs_bh) > 0.4, "orange2", "gray"))
+coords = layout_in_circle(net, order = V(net))
+plot(net, edge.color = edge_colors, layout = coords, main = "Bodega Network")
+
+
+#Create and plot network Lake Solano
+net <- graph(edges = edge_vec, directed = F)
+vec_corrs_ls = vec_cor(data.frame(a[[1]]$`Lake Solano`))
+E(net)$width = abs(vec_corrs_ls) * 6
+edge_colors = ifelse(abs(vec_corrs_ls) > 0.8, "red2", ifelse(abs(vec_corrs_ls) < 0.8 & abs(vec_corrs_ls) > 0.4, "orange2", "gray"))
+coords = layout_in_circle(net, order = V(net))
+plot(net, edge.color = edge_colors, layout = coords, main = "Lake Solano Network")
+
+
+#Create and plot network Mexico
+net <- graph(edges = edge_vec, directed = F)
+vec_corrs_m = vec_cor(data.frame(a[[1]]$`Laguna de la Bocana del Rosaria`))
+E(net)$width = abs(vec_corrs_m) * 6
+edge_colors = ifelse(abs(vec_corrs_m) > 0.8, "red2", ifelse(abs(vec_corrs_m) < 0.8 & abs(vec_corrs_m) > 0.4, "orange2", "gray"))
+coords = layout_in_circle(net, order = V(net))
+plot(net, edge.color = edge_colors, layout = coords, main = "Mexico Network")
+
+
+#----------------------------------------MEXICO MOST PERS---------------------------------------
+#Find combinations of proteins
+a = plot_mostpers_mds(m_mostpers[1])
+comb.pairs = combn(m_mostpers[[1]],2)
+name.pairs = apply(comb.pairs, 2, paste, collapse="-")
+edge_vec = unlist(strsplit(name.pairs, split = "-"))
+
+par(mfrow = c(2,2))
+
+#Create and plot network Alaska
+net <- graph(edges = edge_vec, directed = F)
+vec_corrs_ak = vec_cor(data.frame(a[[1]]$`Westchester Lagoon`))
+E(net)$width = abs(vec_corrs_ak) * 6
+edge_colors = ifelse(abs(vec_corrs_ak) > 0.8, "red2", ifelse(abs(vec_corrs_ak) < 0.8 & abs(vec_corrs_ak) > 0.4, "orange2", "gray"))
+coords = layout_in_circle(net, order = V(net))
+plot(net, edge.color = edge_colors, layout = coords, main = "Alaska Network")
+
+
+
+#Create and plot network Bodega Harbor
+net <- graph(edges = edge_vec, directed = F)
+vec_corrs_bh = vec_cor(data.frame(a[[1]]$`Bodega Harbor`))
+E(net)$width = abs(vec_corrs_bh) * 6
+edge_colors = ifelse(abs(vec_corrs_bh) > 0.8, "red2", ifelse(abs(vec_corrs_bh) < 0.8 & abs(vec_corrs_bh) > 0.4, "orange2", "gray"))
+coords = layout_in_circle(net, order = V(net))
+plot(net, edge.color = edge_colors, layout = coords, main = "Bodega Network")
+
+
+#Create and plot network Lake Solano
+net <- graph(edges = edge_vec, directed = F)
+vec_corrs_ls = vec_cor(data.frame(a[[1]]$`Lake Solano`))
+E(net)$width = abs(vec_corrs_ls) * 6
+edge_colors = ifelse(abs(vec_corrs_ls) > 0.8, "red2", ifelse(abs(vec_corrs_ls) < 0.8 & abs(vec_corrs_ls) > 0.4, "orange2", "gray"))
+coords = layout_in_circle(net, order = V(net))
+plot(net, edge.color = edge_colors, layout = coords, main = "Lake Solano Network")
+
+
+#Create and plot network Mexico
+net <- graph(edges = edge_vec, directed = F)
+vec_corrs_m = vec_cor(data.frame(a[[1]]$`Laguna de la Bocana del Rosaria`))
+E(net)$width = abs(vec_corrs_m) * 6
+edge_colors = ifelse(abs(vec_corrs_m) > 0.8, "red2", ifelse(abs(vec_corrs_m) < 0.8 & abs(vec_corrs_m) > 0.4, "orange2", "gray"))
+coords = layout_in_circle(net, order = V(net))
+plot(net, edge.color = edge_colors, layout = coords, main = "Mexico Network")
+
+
+
+#-------------------------------------------------------------------------------------------------
+
+
+##CLUSTER_PLOTTING
+
+ak_clusters = read.csv("west (2).csv")
+bh_clusters = read.csv("bodega.csv")
+ls_clusters = read.csv("solano.csv")
+m_clusters = read.csv("rosario.csv")
+
+
+##Alaska Cluster MDS
+#Get clustered proteins in a vector
+ak_c_prots = ak_clusters$protein[which(ak_clusters$component == 1)]
+bh_c_prots = bh_clusters$protein[which(bh_clusters$component == 1)]
+ls_c_prots = ls_clusters$protein[which(ls_clusters$component == 1)]
+m_c_prots = m_clusters$protein[which(m_clusters$component == 1)]
+
+
+plot_mostpers_mds(list(ak_c_prots))
+plot_mostpers_mds(list(bh_c_prots))
+plot_mostpers_mds(list(ls_c_prots))
+plot_mostpers_mds(list(m_c_prots))
 
