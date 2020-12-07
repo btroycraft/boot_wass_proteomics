@@ -2,9 +2,9 @@ module OptimSubset
 
 using Random, StatsBase, IterTools, Distributed, ParallelDataTransfer
 
-export max_subset, min_subset, optim_subset_iter, optim_subset_iter_close, dist_subset, dist_subset_rand
+export max_subset, min_subset, optim_subset_iter, dist_subset, dist_subset_rand
 
-max_subset = function(func, length_sub, length_range; keep = 1, show = false)
+function max_subset(func, length_sub, length_range; keep = 1, show = false)
 
     # Gets global maximum by exhaustive search through subsets of range_arg. Requires a function that takes as input a set of indices. keep gives the number of top elements to return
 
@@ -53,7 +53,7 @@ max_subset = function(func, length_sub, length_range; keep = 1, show = false)
     return out_vec, out_mat
 end
 
-min_subset = function(func, length_sub, length_range; keep = 1, show = false)
+function min_subset(func, length_sub, length_range; keep = 1, show = false)
 
     # Gets global minimum by exhaustive search through subsets of range_arg. Requires a function that takes as input a set of indices. keep gives the number of bottom elements to return
 
@@ -101,174 +101,127 @@ min_subset = function(func, length_sub, length_range; keep = 1, show = false)
     return out_vec, out_mat
 end
 
-optim_subset_iter = function(func, length_sub, length_range; reps = 1, keep = 1, max_iter = 1000, type = "max", show = false)
+function optim_subset_iter(func, length_sub, length_range; reps = 1, type = "max", keep = 1, max_iter = 100, time = false)
 
-    optim_subset_iter_ = optim_subset_iter_close(func, length_sub, length_range, keep, max_iter, type, show)
+    (range_perm, sub, sub_temp, opt) = osi_alloc_(length_sub, length_range, type == "max", keep)
 
-    keep_list = [optim_subset_iter_() for _ in 1:reps]
-    keep_out = min(keep, sum(map(length, keep_list)))
-    out_list = vcat(keep_list...)
+    temp = Vector{Vector{Tuple{Float64, Vector{Int}}}}(undef, reps)
 
-    if type == "max"
-        sort!(out_list;
-            by = x -> x[1])
-    elseif type == "min"
-        sort!(out_list;
-            by = x -> x[1],
-            rev = true)
+    for ind in 1:reps
+        if time == true
+            @time temp[ind] = osi_!(func, range_perm, sub, sub_temp, opt, type == "max", keep, max_iter)
+        else
+            temp[ind] = osi_!(func, range_perm, sub, sub_temp, opt, type == "max", keep, max_iter)
+        end
     end
 
-    return out_list[1:keep_out]
+    return sort!(vcat(temp...); by = x->x[1], rev = type == "max")[1:keep]
 end
 
-optim_subset_iter_close = function(func, length_sub, length_range, keep, max_iter, type, show)
+function osi_alloc_(length_sub, length_range, max_, keep)
 
-    length_opt = length_range - length_sub
     range_perm = collect(1:length_range)
     sub = Vector{Int}(undef, length_sub)
+    sub_temp = Vector{Int}(undef, length_sub)
     opt = Vector{Int}(undef, length_range - length_sub)
 
-    if type == "max"
-        return function()
-
-            out_list = Vector{Tuple{Float64, Vector{Int}}}(undef, 0)
-
-            shuffle!(range_perm)
-
-            for ind in 1:length_sub
-                sub[ind] = range_perm[ind]
-            end
-            for ind in 1:length_opt
-                opt[ind] = range_perm[length_sub + ind]
-            end
-
-            for _ in 1:max_iter
-                osi_inner_max_(func, sub, opt, out_list, keep)
-            end
-
-            return out_list
-        end
-    elseif type == "min"
-        return function()
-
-            out_list = Vector{Tuple{Float64, Vector{Int}}}(undef, 0)
-
-            shuffle!(range_perm)
-
-            for ind in 1:length_sub
-                sub[ind] = range_perm[ind]
-            end
-            for ind in 1:length_opt
-                opt[ind] = range_perm[length_sub + ind]
-            end
-
-            for _ in 1:max_iter
-                osi_inner_min_(func, sub, opt, out_list, keep)
-            end
-
-            return out_list
-        end
-    end
+    return range_perm, sub, sub_temp, opt
 end
 
-osi_inner_max_ = function(func, sub, opt, out_list, keep)
+function osi_!(func, range_perm, sub, sub_temp, opt, max_, keep, max_iter)
+
+    length_sub = length(sub)
+
+    out_list = [(max_ == true ? -Inf : Inf, zeros(Int, length_sub)) for _ in 1:keep]
+
+    shuffle!(range_perm)
+
+    for ind in 1:length_sub
+        sub[ind] = range_perm[ind]
+    end
+    for ind in 1:length(opt)
+        opt[ind] = range_perm[length_sub + ind]
+    end
+
+    for ind in 1:max_iter
+        if osi_inner_!(func, sub, sub_temp, opt, out_list, max_) == true
+            break
+        end
+    end
+
+    keep_out = sum(x[2][1] > 0 for x in out_list)
+
+    return out_list[(keep-keep_out+1):keep]
+end
+
+function osi_inner_!(func, sub, sub_temp, opt, out_list, max_)
 
     shuffle!(sub)
     shuffle!(opt)
 
-    sub_temp = copy(sub)
+    length_sub = length(sub)
+    length_opt = length(opt)
 
-    for ind_old in 1:length(sub)
-        for ind_new in 1:length(opt)
+    keep = length(out_list)
+
+    for ind in 1:length_sub
+        sub_temp[ind] = sub[ind]
+    end
+
+    val_ext = out_list[1][1]
+
+    for ind_old in 1:length_sub
+        for ind_new in 1:length_opt
 
             sub_temp[ind_old] = opt[ind_new]
 
             val = func(sub_temp)
 
-            if length(out_list) == 0 || val > out_list[1][1]
+            if max_ == true ? val > val_ext : val < val_ext
 
                 sort!(sub_temp)
 
-                for ind in 1:length(out_list)
-                    if sub_temp == out_list[ind][2]
-                        @goto INNER_LOOP_END
+                for ind in 1:keep
+                    if max_ == true ? val < out_list[ind][1] : val > out_list[ind][1]
+                        break
+                    elseif val == out_list[ind][1] && sub_temp == out_list[ind][2]
+                        for ind in 1:length_sub
+                            sub_temp[ind] = sub[ind]
+                        end
+                        @goto LOOP_END
                     end
                 end
 
-                if length(out_list) < keep
-                    push!(out_list, (val, sub_temp))
-                else
-                    out_list[1] = (val, sub_temp)
-                end
-
-                sort!(out_list;
-                    by = x->x[1])
-
-                opt[ind_new] = sub[ind_old]
-                sub[ind_old] = sub_temp[ind_old]
-
-                return
-            end
-
-            @label INNER_LOOP_END
-        end
-
-        sub_temp[ind_old] = sub[ind_old]
-    end
-
-    return
-end
-
-osi_inner_min_ = function(func, sub, opt, out_list, keep)
-
-    shuffle!(sub)
-    shuffle!(opt)
-
-    sub_temp = copy(sub)
-
-    for ind_old in 1:length(sub)
-        for ind_new in 1:length(opt)
-
-            sub_temp[ind_old] = opt[ind_new]
-
-            val = func(sub_temp)
-
-            if length(out_list) == 0 || val < out_list[1][1]
-
-                sort!(sub_temp)
-
-                for ind in 1:length(out_list)
-                    if sub_temp == out_list[ind][2]
-                        @goto INNER_LOOP_END
+                let temp = out_list[1][2]
+                    out_list[1] = (val, temp)
+                    for ind in 1:length_sub
+                        temp[ind] = sub_temp[ind]
                     end
                 end
 
-                if length(out_list) < keep
-                    push!(out_list, (val, sub_temp))
-                else
-                    out_list[1] = (val, sub_temp)
+                sort!(out_list;
+                    by = x->x[1], rev = !max_)
+
+                val_ext = out_list[1][1]
+
+                let temp = sub[ind_old]
+                    sub[ind_old] = opt[ind_new]
+                    opt[ind_new] = temp
                 end
 
-                sort!(out_list;
-                    by = x->x[1],
-                    rev = true)
-
-                opt[ind_new] = sub[ind_old]
-                sub[ind_old] = sub_temp[ind_old]
-
-                return
+                return false
+            else
+                sub_temp[ind_old] = sub[ind_old]
             end
-
-            @label INNER_LOOP_END
+            
+            @label LOOP_END
         end
-
-        sub_temp[ind_old] = sub[ind_old]
     end
 
-    return
+    return true
 end
 
-dist_subset = function(func, length_sub, length_range; lower, upper, num_bins)
+function dist_subset(func, length_sub, length_range; lower, upper, num_bins)
 
     out_bin = range(lower, upper;
         length = num_bins+1)
@@ -283,7 +236,7 @@ dist_subset = function(func, length_sub, length_range; lower, upper, num_bins)
     return out_dist, out_bin
 end
 
-dist_subset_rand = function(func, length_sub, length_range; lower, upper, num_bins, reps)
+function dist_subset_rand(func, length_sub, length_range; lower, upper, num_bins, reps)
 
     out_bin = range(lower, upper;
         length = num_bins+1)
@@ -301,7 +254,5 @@ dist_subset_rand = function(func, length_sub, length_range; lower, upper, num_bi
 
     return out_dist, out_bin
 end
-
-
 
 end
