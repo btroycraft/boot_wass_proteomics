@@ -1,11 +1,11 @@
-using CSV, DataFrames, Distributed, ParallelDataTransfer, DelimitedFiles
+using Distributed
 
-NUM_PROCS = 7
-addprocs(NUM_PROCS-1)
+addprocs(7)
 
-include("BootPerm.jl")
+@everywhere using CSV, DataFrames, DelimitedFiles
 
-using .BootPerm
+@everywhere include("BootPerm.jl")
+@everywhere using .BootPerm
 
 data_gill = DataFrame!(CSV.File("cDIA_MXLSAKBH-Exp1-2-3-4_Gill_r_format.csv"))
 
@@ -16,46 +16,91 @@ RANGE = 1:size(DATA_MAT, 2)
 
 SUB_SIZE = 100
 KEEP = 100
-REPS_TOTAL = 21
-REPS = convert(Int, ceil(REPS_TOTAL/NUM_PROCS))
+REPS = 200
 MAX_ITER = 10^5
 
-@everywhere begin
-    include("OptimSubset.jl")
-    include("CorSep.jl")
-end
+@everywhere include("OptimSubset.jl")
+@everywhere include("CorSep.jl")
 
 @everywhere using .OptimSubset, .CorSep
 
-@everywhere workers() begin
+max_list_total = let
 
-    SUB_SIZE = $SUB_SIZE
-    KEEP = $KEEP
-    REPS = $REPS
-    MAX_ITER = $MAX_ITER
+    (COR_MAT_LIST, VEC_COR_LIST) = cor_sep_alloc(SUB_SIZE, GROUP_LIST, GROUP_VEC, DATA_MAT, RANGE;
+        trans = true)
 
-    GROUP_LIST = $GROUP_LIST
-    GROUP_VEC = $GROUP_VEC
-    DATA_MAT = $DATA_MAT
-    RANGE = $RANGE
+    @everywhere workers() COR_SEP = CorSepCall($COR_MAT_LIST, deepcopy($VEC_COR_LIST))
+
+    optim_subset_iter(x -> COR_SEP(x), SUB_SIZE, length(RANGE);
+        reps = REPS,
+        type = "max",
+        keep = KEEP,
+        max_iter = MAX_ITER,
+        worker_ids = workers())
 end
 
-@everywhere (COR_MAT_LIST, VEC_COR_LIST) = cor_sep_alloc(SUB_SIZE, GROUP_LIST, GROUP_VEC, DATA_MAT, RANGE;
+max_list_rosaria = let
+
+    (COR_MAT_LIST, VEC_COR_LIST) = cor_sep_group_alloc(SUB_SIZE, 1, GROUP_LIST, GROUP_VEC, DATA_MAT, RANGE;
         trans = true)
-@everywhere workers() COR_MAT_LIST = $COR_MAT_LIST
-@everywhere max_list_t = optim_subset_iter(SUB_SIZE, length(RANGE);
-    keep = KEEP,
-    max_iter = MAX_ITER,
-    reps = REPS) do sub
-        cor_sep!(sub, GROUP_LIST, GROUP_VEC, DATA_MAT, RANGE, COR_MAT_LIST, VEC_COR_LIST; trans = true)
-    end
 
-temp = [getfrom(id, :max_list_t) for id in procs()]
-rmprocs(workers())
-max_list = vcat(temp...)
-max_list = sort!(max_list;
-    by = x -> x[1],
-    rev = true)
-max_list = max_list[1:KEEP]
+    @everywhere workers() COR_SEP = CorSepGroupCall($COR_MAT_LIST, deepcopy($VEC_COR_LIST))
 
-CSV.write("upd.csv", hcat(DataFrame(val = map(x->x[1], max_list)), DataFrame(hcat(map(x->x[2], max_list)...)')))
+    optim_subset_iter(x -> COR_SEP(x), SUB_SIZE, length(RANGE);
+        reps = REPS,
+        type = "max",
+        keep = KEEP,
+        max_iter = MAX_ITER,
+        worker_ids = workers())
+end
+
+max_list_bodega = let
+
+    (COR_MAT_LIST, VEC_COR_LIST) = cor_sep_group_alloc(SUB_SIZE, 2, GROUP_LIST, GROUP_VEC, DATA_MAT, RANGE;
+        trans = true)
+
+    @everywhere workers() COR_SEP = CorSepGroupCall($COR_MAT_LIST, deepcopy($VEC_COR_LIST))
+
+    optim_subset_iter(x -> COR_SEP(x), SUB_SIZE, length(RANGE);
+        reps = REPS,
+        type = "max",
+        keep = KEEP,
+        max_iter = MAX_ITER,
+        worker_ids = workers())
+end
+
+max_list_solano = let
+
+    (COR_MAT_LIST, VEC_COR_LIST) = cor_sep_group_alloc(SUB_SIZE, 3, GROUP_LIST, GROUP_VEC, DATA_MAT, RANGE;
+        trans = true)
+
+    @everywhere workers() COR_SEP = CorSepGroupCall($COR_MAT_LIST, deepcopy($VEC_COR_LIST))
+
+    optim_subset_iter(x -> COR_SEP(x), SUB_SIZE, length(RANGE);
+        reps = REPS,
+        type = "max",
+        keep = KEEP,
+        max_iter = MAX_ITER,
+        worker_ids = workers())
+end
+
+max_list_westchester = let
+
+    (COR_MAT_LIST, VEC_COR_LIST) = cor_sep_group_alloc(SUB_SIZE, 4, GROUP_LIST, GROUP_VEC, DATA_MAT, RANGE;
+        trans = true)
+
+    @everywhere workers() COR_SEP = CorSepGroupCall($COR_MAT_LIST, deepcopy($VEC_COR_LIST))
+
+    optim_subset_iter(x -> COR_SEP(x), SUB_SIZE, length(RANGE);
+        reps = REPS,
+        type = "max",
+        keep = KEEP,
+        max_iter = MAX_ITER,
+        worker_ids = workers())
+end
+
+CSV.write("ind_max_total.csv", hcat(DataFrame(val = map(x->x[1], max_list_total)), DataFrame(hcat(map(x->x[2], max_list_total)...)')))
+CSV.write("ind_max_rosaria.csv", hcat(DataFrame(val = map(x->x[1], max_list_rosaria)), DataFrame(hcat(map(x->x[2], max_list_rosaria)...)')))
+CSV.write("ind_max_bodega.csv", hcat(DataFrame(val = map(x->x[1], max_list_bodega)), DataFrame(hcat(map(x->x[2], max_list_bodega)...)')))
+CSV.write("ind_max_solano.csv", hcat(DataFrame(val = map(x->x[1], max_list_solano)), DataFrame(hcat(map(x->x[2], max_list_solano)...)')))
+CSV.write("ind_max_westchester.csv", hcat(DataFrame(val = map(x->x[1], max_list_westchester)), DataFrame(hcat(map(x->x[2], max_list_westchester)...)')))
