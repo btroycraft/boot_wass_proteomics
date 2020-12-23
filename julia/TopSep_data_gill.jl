@@ -1,8 +1,8 @@
 using Distributed
 
-num_procs = 20
+num_workers = 0
 
-addprocs(num_procs)
+addprocs(num_workers)
 
 @everywhere using CSV, DataFrames, DelimitedFiles
 
@@ -16,10 +16,10 @@ DATA_MAT = convert(Matrix, select(data_gill, Not([:sample, :location])))
 PROTEINS = names(select(data_gill, Not([:sample, :location])))
 RANGE = 1:size(DATA_MAT, 2)
 
-SUB_SIZE = 100
+SUB_SIZE = 20
 KEEP = 100
-REPS = 200
-MAX_ITER = 10^5
+REPS = 3
+MAX_ITER = 100
 
 @everywhere include("OptimSubset.jl")
 @everywhere include("TopSep.jl")
@@ -32,13 +32,15 @@ max_list_total = let
 
     @everywhere workers() TOP_SEP = TopSepCall(0, $DIST_MAT_LIST, deepcopy($DIST_SUB_MAT_LIST))
 
-    optim_subset_iter(x -> COR_SEP(x), SUB_SIZE, length(RANGE);
+    optim_subset_iter(x -> TOP_SEP(x), SUB_SIZE, length(RANGE);
         reps = REPS,
         type = "max",
         keep = KEEP,
         max_iter = MAX_ITER,
         worker_ids = workers())
 end
+
+CSV.write("ind_max_total.csv", hcat(DataFrame(val = map(x->x[1], max_list_total)), DataFrame(hcat(map(x->x[2], max_list_total)...)')))
 
 max_list_rosaria = let
 
@@ -55,6 +57,8 @@ max_list_rosaria = let
         worker_ids = workers())
 end
 
+CSV.write("ind_max_rosaria.csv", hcat(DataFrame(val = map(x->x[1], max_list_rosaria)), DataFrame(hcat(map(x->x[2], max_list_rosaria)...)')))
+
 max_list_bodega = let
 
     (COR_MAT_LIST, VEC_COR_LIST) = cor_sep_group_alloc(SUB_SIZE, 2, GROUP_LIST, GROUP_VEC, DATA_MAT, RANGE;
@@ -69,6 +73,8 @@ max_list_bodega = let
         max_iter = MAX_ITER,
         worker_ids = workers())
 end
+
+CSV.write("ind_max_bodega.csv", hcat(DataFrame(val = map(x->x[1], max_list_bodega)), DataFrame(hcat(map(x->x[2], max_list_bodega)...)')))
 
 max_list_solano = let
 
@@ -85,6 +91,8 @@ max_list_solano = let
         worker_ids = workers())
 end
 
+CSV.write("ind_max_solano.csv", hcat(DataFrame(val = map(x->x[1], max_list_solano)), DataFrame(hcat(map(x->x[2], max_list_solano)...)')))
+
 max_list_westchester = let
 
     (COR_MAT_LIST, VEC_COR_LIST) = cor_sep_group_alloc(SUB_SIZE, 4, GROUP_LIST, GROUP_VEC, DATA_MAT, RANGE;
@@ -100,10 +108,7 @@ max_list_westchester = let
         worker_ids = workers())
 end
 
-rmprocs(workers())
-
-CSV.write("ind_max_total.csv", hcat(DataFrame(val = map(x->x[1], max_list_total)), DataFrame(hcat(map(x->x[2], max_list_total)...)')))
-CSV.write("ind_max_rosaria.csv", hcat(DataFrame(val = map(x->x[1], max_list_rosaria)), DataFrame(hcat(map(x->x[2], max_list_rosaria)...)')))
-CSV.write("ind_max_bodega.csv", hcat(DataFrame(val = map(x->x[1], max_list_bodega)), DataFrame(hcat(map(x->x[2], max_list_bodega)...)')))
-CSV.write("ind_max_solano.csv", hcat(DataFrame(val = map(x->x[1], max_list_solano)), DataFrame(hcat(map(x->x[2], max_list_solano)...)')))
 CSV.write("ind_max_westchester.csv", hcat(DataFrame(val = map(x->x[1], max_list_westchester)), DataFrame(hcat(map(x->x[2], max_list_westchester)...)')))
+
+
+rmprocs(workers())
