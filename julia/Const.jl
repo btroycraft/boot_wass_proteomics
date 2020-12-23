@@ -1,6 +1,8 @@
 using Distributed
 
-addprocs(7)
+num_procs = 20
+
+addprocs(num_procs)
 
 @everywhere using CSV, DataFrames, DelimitedFiles
 
@@ -98,6 +100,8 @@ max_list_westchester = let
         max_iter = MAX_ITER,
         worker_ids = workers())
 end
+
+rmprocs(workers())
 
 CSV.write("ind_max_total.csv", hcat(DataFrame(val = map(x->x[1], max_list_total)), DataFrame(hcat(map(x->x[2], max_list_total)...)')))
 CSV.write("ind_max_rosaria.csv", hcat(DataFrame(val = map(x->x[1], max_list_rosaria)), DataFrame(hcat(map(x->x[2], max_list_rosaria)...)')))
