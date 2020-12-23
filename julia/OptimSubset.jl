@@ -7,30 +7,34 @@ export optim_subset_iter, dist_subset, dist_subset_rand
 function optim_subset_iter(func, length_sub, length_range; reps = 1, type = "max", keep = 1, max_iter = 10^2, worker_ids = workers())
 
     if length(worker_ids) == 1 && worker_ids[1] == 1
-        return optim_subset_iter_!(func, length_sub, length_range, type == "max", keep, max_iter)
+
+        out_list = vcat(map(1:reps) do _
+            optim_subset_iter_!(func, length_sub, length_range, type == "max", keep, max_iter)
+        end...)
+    else
+
+        for id in worker_ids
+            sendto(id, func = func, length_sub = length_sub, length_range = length_range, max_ = type == "max", keep = keep, max_iter = max_iter)
+        end
+
+        out_list = vcat(pmap(CachingPool(worker_ids), 1:reps) do _
+            optim_subset_iter_!(func, length_sub, length_range, type == "max", keep, max_iter)
+        end...)
     end
 
-    for id in worker_ids
-        sendto(id, func = func, length_sub = length_sub, length_range = length_range, max_ = type == "max", keep = keep, max_iter = max_iter)
-    end
-
-    temp_list = pmap(CachingPool(worker_ids), 1:reps) do _
-        optim_subset_iter_!(func, length_sub, length_range, type == "max", keep, max_iter)
-    end
-
-    out_list = sort!(vcat(temp_list...);
+    sort!(out_list;
         by = x -> x[1],
         rev = type == "max")
-
     for ind in length(out_list):-1:2
         if(out_list[ind][2] == out_list[ind-1][2])
             type == "max" ? out_list[ind] = (-Inf, Int[]) : out_list[ind] = (Inf, Int[])
         end
     end
+    sort!(out_list;
+        by = x -> x[1],
+        rev = type == "max")
 
-    return sort!(out_list;
-        by = x->x[1],
-        rev = type == "max")[1:keep]
+    return out_list
 end
 
 function optim_subset_iter_!(func, length_sub, length_range, max_, keep, max_iter)

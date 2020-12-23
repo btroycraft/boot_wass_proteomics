@@ -44,7 +44,7 @@ function (CorSepCall_::CorSepCall)(sub)
 
     out = Inf
 
-    for ind1 in 1:num_groups
+    for ind1 in 1:(num_groups-1)
         vec_cor1 = CorSepCall_.vec_cor_list[ind1]
         for ind2 in (ind1+1):num_groups
             vec_cor2 = CorSepCall_.vec_cor_list[ind2]
