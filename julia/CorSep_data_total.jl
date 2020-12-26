@@ -1,6 +1,6 @@
 using Distributed
 
-num_workers = 5
+num_workers = 30
 
 addprocs(num_workers)
 
@@ -16,9 +16,9 @@ DATA_MAT = convert(Matrix, select(data_gill, Not([:sample, :location])))
 PROTEINS = names(select(data_gill, Not([:sample, :location])))
 RANGE = 1:size(DATA_MAT, 2)
 
-SUB_SIZE = 30
+SUB_SIZE = 100
 KEEP = 100
-REPS = 5
+REPS = 200
 MAX_ITER = 10^5
 
 @everywhere include("OptimSubset.jl")
@@ -26,14 +26,14 @@ MAX_ITER = 10^5
 
 @everywhere using .OptimSubset, .CorSep
 
-max_list_rosaria = let
+max_list_total = let
 
-    (COR_MAT_LIST, VEC_COR_LIST) = cor_sep_group_alloc(SUB_SIZE, 1, GROUP_LIST, GROUP_VEC, DATA_MAT, RANGE;
+    (COR_MAT_LIST, VEC_COR_LIST) = cor_sep_alloc(SUB_SIZE, GROUP_LIST, GROUP_VEC, DATA_MAT, RANGE;
         trans = true)
 
-    @everywhere workers() COR_SEP_GROUP = CorSepGroupCall($COR_MAT_LIST, deepcopy($VEC_COR_LIST))
+    @everywhere workers() COR_SEP = CorSepCall($COR_MAT_LIST, deepcopy($VEC_COR_LIST))
 
-    optim_subset_iter(x -> COR_SEP_GROUP(x), SUB_SIZE, length(RANGE);
+    optim_subset_iter(x -> COR_SEP(x), SUB_SIZE, length(RANGE);
         reps = REPS,
         type = "max",
         keep = KEEP,
@@ -41,6 +41,6 @@ max_list_rosaria = let
         worker_ids = workers())
 end
 
-CSV.write("ind_max_rosaria.csv", hcat(DataFrame(val = map(x->x[1], max_list_rosaria)), DataFrame(hcat(map(x->x[2], max_list_rosaria)...)')))
+CSV.write("ind_max_total.csv", hcat(DataFrame(val = map(x->x[1], max_list_total)), DataFrame(hcat(map(x->x[2], max_list_total)...)')))
 
 rmprocs(workers())

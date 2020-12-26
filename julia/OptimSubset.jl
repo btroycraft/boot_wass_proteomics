@@ -23,18 +23,23 @@ function optim_subset_iter(func, length_sub, length_range; reps = 1, type = "max
     end
 
     sort!(out_list;
-        by = x -> x[1],
-        rev = type == "max")
+        by = x -> x[2])
     for ind in length(out_list):-1:2
         if(out_list[ind][2] == out_list[ind-1][2])
-            type == "max" ? out_list[ind] = (-Inf, Int[]) : out_list[ind] = (Inf, Int[])
+            out_list[ind] = (type == "max" ? -Inf : Inf, out_list[ind][2])
         end
     end
     sort!(out_list;
         by = x -> x[1],
         rev = type == "max")
-
-    return out_list[1:keep]
+    
+    out_list = out_list[1:keep]
+    keep = sum(map(out_list) do x
+        type == "max" ? x[1] > -Inf : x[1] < Inf
+    end)
+    out_list = out_list[1:keep]
+    
+    return out_list
 end
 
 function optim_subset_iter_!(func, length_sub, length_range, max_, keep, max_iter)

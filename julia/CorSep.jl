@@ -64,15 +64,11 @@ function cor_sep_group_alloc(sub_size, group_num, group_list, group_vec, data_ma
     num_groups = length(group_list)
     num_pairs = binomial(sub_size, 2)
 
+    group_list = vcat(group_list[group_num], group_list[1:(group_list-1)], group_list[(group_num+1):num_groups])
+
     cor_mat_list = [trans == true ? atanh.(cor(data_mat[group_vec[group], range])) : cor(data_mat[group_vec[group], range]) for group in group_list]
 
     vec_cor_list = [Vector{Float64}(undef, num_pairs) for _ in 1:num_groups]
-
-    temp = cor_mat_list[group_num]
-    for ind in (group_num-1):-1:1
-        cor_mat_list[ind+1] = cor_mat_list[ind]
-    end
-    cor_mat_list[1] = temp
 
     return cor_mat_list, vec_cor_list
 end
