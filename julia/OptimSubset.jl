@@ -34,7 +34,7 @@ function optim_subset_iter(func, length_sub, length_range; reps = 1, type = "max
         by = x -> x[1],
         rev = type == "max")
 
-    return out_list
+    return out_list[1:keep]
 end
 
 function optim_subset_iter_!(func, length_sub, length_range, max_, keep, max_iter)
