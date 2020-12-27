@@ -1,6 +1,6 @@
 using Distributed
 
-num_workers = 5
+num_workers = 25
 
 addprocs(num_workers)
 
@@ -16,9 +16,9 @@ DATA_MAT = convert(Matrix, select(data_gill, Not([:sample, :location])))
 PROTEINS = names(select(data_gill, Not([:sample, :location])))
 RANGE = 1:size(DATA_MAT, 2)
 
-SUB_SIZE = 30
+SUB_SIZE = 100
 KEEP = 100
-REPS = 5
+REPS = 200
 MAX_ITER = 10^5
 
 @everywhere include("OptimSubset.jl")
@@ -29,9 +29,9 @@ MAX_ITER = 10^5
 max_list_rosaria = let
 
     (COR_MAT_LIST, VEC_COR_LIST) = cor_sep_group_alloc(SUB_SIZE, 1, GROUP_LIST, GROUP_VEC, DATA_MAT, RANGE;
-        trans = true)
+    trans = true)
 
-    @everywhere workers() COR_SEP_GROUP = CorSepGroupCall($COR_MAT_LIST, deepcopy($VEC_COR_LIST))
+    @everywhere COR_SEP_GROUP = CorSepGroupCall($COR_MAT_LIST, deepcopy($VEC_COR_LIST))
 
     optim_subset_iter(x -> COR_SEP_GROUP(x), SUB_SIZE, length(RANGE);
         reps = REPS,
