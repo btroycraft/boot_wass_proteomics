@@ -28,7 +28,7 @@ MAX_ITER = 10^5
 
 max_list = let
 
-    (COR_MAT_LIST, VEC_COR_LIST) = cor_sep_group_alloc(SUB_SIZE, 1, GROUP_LIST, GROUP_VEC, DATA_MAT, RANGE;
+    (COR_MAT_LIST, VEC_COR_LIST) = cor_sep_group_alloc(SUB_SIZE, 4, GROUP_LIST, GROUP_VEC, DATA_MAT, RANGE;
     trans = true)
 
     @everywhere COR_SEP = CorSepGroupCall($COR_MAT_LIST, deepcopy($VEC_COR_LIST))
@@ -41,6 +41,6 @@ max_list = let
         worker_ids = workers())
 end
 
-CSV.write("ind_max_rosaria.csv", hcat(DataFrame(val = map(x->x[1], max_list)), DataFrame(hcat(map(x->x[2], max_list)...)')))
+CSV.write("ind_max_westchester.csv", hcat(DataFrame(val = map(x->x[1], max_list)), DataFrame(hcat(map(x->x[2], max_list)...)')))
 
 rmprocs(workers())
