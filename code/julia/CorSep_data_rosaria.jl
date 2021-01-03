@@ -9,7 +9,7 @@ addprocs(num_workers)
 @everywhere include("BootPerm.jl")
 @everywhere using .BootPerm
 
-data_gill = DataFrame!(CSV.File("../data/cDIA_MXLSAKBH-Exp1-2-3-4_Gill_r_format.csv"))
+data_gill = DataFrame!(CSV.File("cDIA_MXLSAKBH-Exp1-2-3-4_Gill_r_format.csv"))
 
 DATA_MAT = convert(Matrix, select(data_gill, Not([:sample, :location])))
 (GROUP_LIST, GROUP_VEC) = split_groups(data_gill[:, :location])
@@ -41,6 +41,6 @@ max_list = let
         worker_ids = workers())
 end
 
-CSV.write("../data/ind_max_rosaria.csv", hcat(DataFrame(val = map(x->x[1], max_list)), DataFrame(hcat(map(x->x[2], max_list)...)')))
+CSV.write("ind_max_rosaria.csv", hcat(DataFrame(val = map(x->x[1], max_list)), DataFrame(hcat(map(x->x[2], max_list)...)')))
 
 rmprocs(workers())
