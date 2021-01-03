@@ -1,15 +1,15 @@
 using Distributed
 
-num_procs = 30
+num_workers = 25
 
-addprocs(num_procs)
+addprocs(num_workers)
 
 @everywhere using CSV, DataFrames, DelimitedFiles
 
 @everywhere include("BootPerm.jl")
 @everywhere using .BootPerm
 
-data_gill = DataFrame!(CSV.File("cDIA_MXLSAKBH-Exp1-2-3-4_Gill_r_format.csv"))
+data_gill = DataFrame!(CSV.File("../data/cDIA_MXLSAKBH-Exp1-2-3-4_Gill_r_format.csv"))
 
 DATA_MAT = convert(Matrix, select(data_gill, Not([:sample, :location])))
 (GROUP_LIST, GROUP_VEC) = split_groups(data_gill[:, :location])
@@ -26,12 +26,12 @@ MAX_ITER = 10^5
 
 @everywhere using .OptimSubset, .CorSep
 
-max_list_total = let
+max_list = let
 
-    (COR_MAT_LIST, VEC_COR_LIST) = cor_sep_alloc(SUB_SIZE, GROUP_LIST, GROUP_VEC, DATA_MAT, RANGE;
-        trans = true)
+    (COR_MAT_LIST, VEC_COR_LIST) = cor_sep_group_alloc(SUB_SIZE, 2, GROUP_LIST, GROUP_VEC, DATA_MAT, RANGE;
+    trans = true)
 
-    @everywhere workers() COR_SEP = CorSepCall($COR_MAT_LIST, deepcopy($VEC_COR_LIST))
+    @everywhere COR_SEP = CorSepGroupCall($COR_MAT_LIST, deepcopy($VEC_COR_LIST))
 
     optim_subset_iter(x -> COR_SEP(x), SUB_SIZE, length(RANGE);
         reps = REPS,
@@ -41,6 +41,6 @@ max_list_total = let
         worker_ids = workers())
 end
 
-CSV.write("ind_max_total.csv", hcat(DataFrame(val = map(x->x[1], max_list_total)), DataFrame(hcat(map(x->x[2], max_list_total)...)')))
+CSV.write("../data/ind_max_bodega.csv", hcat(DataFrame(val = map(x->x[1], max_list)), DataFrame(hcat(map(x->x[2], max_list)...)')))
 
 rmprocs(workers())
