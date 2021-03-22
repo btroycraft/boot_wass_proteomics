@@ -3,8 +3,8 @@
 EMAIL=
 SERVER=
 
-R = R --vanilla --file=rscripts/$(1) > rout/$(1).out
-JULIA = julia --file=rscripts/$(1) > rout/$(1).out
+R = R --vanilla --file=r/$(1) > rout/$(1).out
+JULIA = julia --file=julia/$(1) > rout/$(1).out
 MAIL = $(if $(EMAIL), mail -s $(1) ${EMAIL} <<< "$(1) has finished running on ${SERVER}.")
 
 all:
