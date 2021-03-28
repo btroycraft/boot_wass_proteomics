@@ -9,3 +9,9 @@ SUB.DIAG <- function(diag, q = 1L){
   row.names(diag) <- seq_len(nrow(diag))
   return( diag )
 }
+
+PBETTI <- function(diag, r, s = r, q = 1L){
+  mapply(function(r, s){
+    sum(diag$Dim == q & diag$Birth <= r & diag$Death > s)
+  }, r, s)
+}

@@ -2,13 +2,13 @@ library(tidyverse)
 
 DATA_GILL <- read.csv('data/cDIA_MXLSAKBH-Exp1-2-3-4_Gill_r_format.csv', stringsAsFactors = FALSE)
 
-NAME_LIST <- {c(
+NAME_LIST <- c(
   'Total' = 'total',
   'Laguna de la Bocana del Rosaria' = 'rosaria',
   'Bodega Harbor' = 'bodega',
   'Lake Solano' = 'solano',
   'Westchester Lagoon' = 'westchester'
-)}
+)
 
 IND_LIST <- list(
   all = names(DATA_GILL)[!(names(DATA_GILL) %in% c('sample', 'location'))],
@@ -40,18 +40,19 @@ IND_LIST <- list(
 REF_LIST <- list(
   all = 'all',
   max =
-    names(IND_LIST$top$betti0) %>%
+    names(IND_LIST$max) %>%
     set_names(., .) %>%
-    as.list,
+    as.list %>%
+    lapply(. %>% c('max', .) ),
   top = list(
     betti0 =
       names(IND_LIST$top$betti0) %>%
       set_names(., .) %>%
-      as.list,
+      lapply(. %>% c('top', 'betti0', .) ),
     betti1 =
-      names(IND_LIST$top$betti0) %>%
+      names(IND_LIST$top$betti1) %>%
       set_names(., .) %>%
-      as.list
+      lapply(. %>% c('top', 'betti1', .) )
   )
 )
 
