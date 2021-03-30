@@ -1,0 +1,13 @@
+node	identifier	x_position	y_position	color	annotation
+G3N6H3	69293.ENSGACP00000000898	0.5235384615384616	0.38230769230769235	rgb(255,0,0)	Zgc:153867; Myosin, light chain 6, alkali, smooth muscle and non-muscle
+G3N952	69293.ENSGACP00000001840	0.542	0.7146153846153848	rgb(101,255,163)	Eukaryotic translation elongation factor 1 delta b (guanine nucleotide exchange protein); Elongation factor-1, delta, b; Belongs to the EF-1-beta/EF-1-delta family
+G3NGV7	69293.ENSGACP00000004564	0.6176923076923078	0.5484615384615386	rgb(0,178,157)	LSM3 homolog, U6 small nuclear RNA associated (S. cerevisiae)
+G3NR25	69293.ENSGACP00000007791	0.40353846153846157	0.38230769230769235	rgb(255,175,101)	annotation not available
+G3NVV4	69293.ENSGACP00000009473	0.578923076923077	0.2161538461538462	rgb(239,117,117)	Matrix Gla protein
+G3P8K6	69293.ENSGACP00000013930	0.4432307692307692	0.4930769230769231	rgb(0,28,178)	Heat shock 70kDa protein 8
+G3PJ42	69293.ENSGACP00000017621	0.4866153846153846	0.6066153846153847	rgb(101,199,255)	Aly/REF export factor
+G3PWU7	69293.ENSGACP00000022086	0.578923076923077	0.8253846153846155	rgb(178,171,0)	Collagen, type XI, alpha 1b
+G3Q4Z0	69293.ENSGACP00000024944	0.4773846153846154	0.8253846153846155	rgb(150,101,255)	Tubulin beta chain; Tubulin is the major constituent of microtubules. It binds two moles of GTP, one at an exchangeable site on the beta chain and one at a non-exchangeable site on the alpha chain
+G3Q6S8	69293.ENSGACP00000025588	0.37584615384615383	0.27153846153846156	rgb(239,166,117)	Rab GDP dissociation inhibitor; Regulates the GDP/GTP exchange reaction of most RAB proteins by inhibiting the dissociation of GDP from them, and the subsequent binding of GTP
+G3QA18	69293.ENSGACP00000026734	0.37584615384615383	0.7423076923076924	rgb(187,255,101)	Heat shock protein, alpha-crystallin-related, 1; Belongs to the small heat shock protein (HSP20) family
+G3QA72	69293.ENSGACP00000026788	0.4755384615384615	0.18846153846153846	rgb(14,178,0)	Stress-induced-phosphoprotein 1 (Hsp70/Hsp90-organizing protein)

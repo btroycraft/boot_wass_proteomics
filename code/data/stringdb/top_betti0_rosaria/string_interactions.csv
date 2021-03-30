@@ -1,0 +1,4 @@
+"node1","node2","string_id1","string_id2","neighborhood_on_chromosome","gene_fusion","phylogenetic_cooccurrence","homology","coexpression","experimentally_determined_interaction","database_annotated","automated_textmining","combined_score"
+"G3NNM8","G3NX96","69293.ENSGACP00000006942","69293.ENSGACP00000009965",0,0,0,0,0.128,0.082,0.365,0.111,0.487
+"G3PZH5","G3Q2D6","69293.ENSGACP00000023015","69293.ENSGACP00000024035",0,0,0,0,0.826,0.725,0.45,0.171,0.975
+"G3Q3C4","G3Q972","69293.ENSGACP00000024376","69293.ENSGACP00000026436",0.148,0,0,0,0.991,0.892,0.621,0.643,0.999

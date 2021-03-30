@@ -1,63 +1,77 @@
-data_gill <- read.csv('cDIA_MXLSAKBH-Exp1-2-3-4_Gill_r_format.csv')
-data_list <- split(data_gill[, !(colnames(data_gill) %in% c('sample', 'location'))], data_gill$location)
-cor_list <- lapply(data_list, cor)
+library(ggplot2)
 
-indices <- read.csv('../julia/selected_subsets.csv')
-
-get.dend <- function(cor_mat){
+cor.dend <- function(cor_mat){
   
-  cor_vec <- cbind(cor_mat[lower.tri(cor_mat)], t(combn(1:nrow(cor_mat), 2)))
-  cor_vec <- cor_vec[order(cor_vec[, 1], decreasing = TRUE), ]
+  cor_melt <-
+    t(combn(nrow(cor_mat), 2)) %>%
+      data.frame(cor_mat[lower.tri(cor_mat)]) %>%
+      set_names(c('i', 'j', 'val')) %>%
+      arrange(desc(val))
   
-  group <- 1:nrow(cor_mat)
-  group_list <- lapply(group, function(x) list(birth = 1, death = nrow(cor_mat)+1, clust = x))
-  change <- numeric(nrow(cor_mat)+1)
-  change[1] <- 1
-  change[length(change)] <- -1
+  group_list <-
+    seq_len(nrow(cor_mat)) %>%
+      lapply(. %>%
+        list(birth = 1, death = nrow(cor_mat)+1, clust = .)
+      )
   
-  ind_change <- 2
-  for(ind in 1:nrow(cor_vec)){
-    i <- cor_vec[ind, 2]
-    j <- cor_vec[ind, 3]
-    val <- cor_vec[ind, 1]
-    if(group[i] != group[j]){
-      group_pair <- sort(group[c(i, j)])
+  change <- c(1, rep(0, nrow(cor_mat)-1), -1)
+  
+  local({
+    
+    group_work <- seq_len(nrow(cor_mat))
+    ind_change <- 2
+    
+    lapply(seq_len(nrow(cor_vec)-1), function(._){
       
-      group_list[[group_pair[1]]]$death <- ind_change+1
-      group_list[[group_pair[2]]]$death <- ind_change+1
-      group_list[[group_pair[1]]] <- list(birth = ind_change+1,
-                                         death = nrow(cor_mat)+2,
-                                         clust = c(group_list[[group_pair[1]]]$clust, group_list[[group_pair[2]]]$clust),
-                                         group_list[[group_pair[1]]],
-                                         group_list[[group_pair[2]]])
-      group_list[[group_pair[2]]] <- NA
+      i <- cor_melt$i[._]
+      j <- cor_melt$j[._]
+      val <- cor_melt$val[._]
       
-      group[group == group_pair[2]] <- group_pair[1]
-      
-      change[ind_change] <- val
-      ind_change <- ind_change + 1
-    }
-  }
+      if(group_work[i] != group_work[j]){
+        group_pair <- sort(group_work[c(i, j)])
+        
+        group_list[[group_pair[1]]]$death <<- ind_change+1
+        group_list[[group_pair[2]]]$death <<- ind_change+1
+        group_list[[group_pair[1]]] <<-
+          list(
+            birth = ind_change+1,
+            death = nrow(cor_mat)+2,
+            clust = c(
+              group_list[[group_pair[1]]]$clust,
+              group_list[[group_pair[2]]]$clust),
+            group_list[[group_pair[1]]],
+            group_list[[group_pair[2]]]
+          )
+        group_list[[group_pair[2]]] <<- NA
+        
+        group_work[group_work == group_pair[2]] <<- group_pair[1]
+        
+        change[ind_change] <<- val
+        ind_change <<- ind_change + 1
+      }
+    })
+  })
   
   group_list <- group_list[!is.na(group_list)]
-  ord <- order(group_list[[1]]$clust)
   
-  get.dend_ <- function(node, ord){
-    node$clust <- ord[node$clust]
+  ord <- order(group_list$clust)
+  rnk <- rank(group_list$clust)
+  
+  .cor.dend <- function(node){
+    node$clust <- rnk[node$clust]
     if(length(node) == 5){
-      node[[4]] <- get.dend_(node[[4]], ord)
-      node[[5]] <- get.dend_(node[[5]], ord)
+      node[[4]] <- .cor.dend(node[[4]])
+      node[[4]] <- .cor.dend(node[[5]])
     }
     
     return(node)
   }
   
-  group_list <- list(index = group_list[[1]]$clust,
-                     change = change,
-                     tree = get.dend_(group_list[[1]], ord))
-  
-  
-  return( group_list )
+  return(list(
+    lab = ord,
+    change = change,
+    tree = .cor.dend(group_list[[1]])
+  ))
 }
 
 dend.to.mat <- function(dend){
@@ -66,17 +80,17 @@ dend.to.mat <- function(dend){
   
   mat <- matrix(0, n, n+1)
   
-  dend.to.mat_ <- function(tree){
+  .dend.to.mat <- function(tree){
     val <- mean(tree$clust)
     mat[tree$clust, tree$birth:(tree$death-1)] <<- val
     
     if(length(tree) == 5){
-      mat <- dend.to.mat_(tree[[4]])
-      mat <- dend.to.mat_(tree[[5]])
+      mat <<- .dend.to.mat(tree$child1)
+      mat <<- .dend.to.mat(tree$child2)
     }
   }
   
-  dend.to.mat_(dend$tree)
+  .dend.to.mat(dend$tree)
   
   return(mat[, -1])
 }

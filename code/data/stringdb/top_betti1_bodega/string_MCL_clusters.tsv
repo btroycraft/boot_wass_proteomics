@@ -1,0 +1,7 @@
+clustering method	cluster number	cluster color	gene count	protein name	protein identifier	protein description
+MCL	1	Red	2	G3N6H3	69293.ENSGACP00000000898	Zgc:153867; Myosin, light chain 6, alkali, smooth muscle and non-muscle
+MCL	1	Red	2	G3P0D8	69293.ENSGACP00000011061	Troponin I type 2a (skeletal, fast), tandem duplicate 4; Troponin I type 2 (skeletal, fast)
+MCL	2	Green	2	G3NNI9	69293.ENSGACP00000006903	Collagen, type I, alpha 1a
+MCL	2	Green	2	G3PWU7	69293.ENSGACP00000022086	Collagen, type XI, alpha 1b
+MCL	3	Blue	2	G3NYB9	69293.ENSGACP00000010339	annotation not available
+MCL	3	Blue	2	G3PKP7	69293.ENSGACP00000018177	NADH dehydrogenase (ubiquinone) 1 alpha subcomplex, 9

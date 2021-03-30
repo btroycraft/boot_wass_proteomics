@@ -1,0 +1,4 @@
+node1	node2	node1_string_id	node2_string_id	neighborhood_on_chromosome	gene_fusion	phylogenetic_cooccurrence	homology	coexpression	experimentally_determined_interaction	database_annotated	automated_textmining	combined_score
+G3NGV7	G3PJ42	69293.ENSGACP00000004564	69293.ENSGACP00000017621	0	0	0	0	0.177	0	0.366	0	0.455
+G3P8K6	G3QA18	69293.ENSGACP00000013930	69293.ENSGACP00000026734	0	0	0	0	0.061	0.144	0.347	0.301	0.584
+G3P8K6	G3QA72	69293.ENSGACP00000013930	69293.ENSGACP00000026788	0	0	0	0	0.228	0.418	0.346	0.357	0.785

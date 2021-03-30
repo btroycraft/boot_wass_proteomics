@@ -1,0 +1,82 @@
+node	identifier	x_position	y_position	color	annotation
+G3N556	69293.ENSGACP00000000426	0.43513207547169813	0.5799416180150125	rgb(239,124,117)	Proteasome (prosome, macropain) subunit, alpha type,5
+G3N577	69293.ENSGACP00000000447	0.651811320754717	0.34424520433694744	rgb(239,189,117)	annotation not available
+G3N5P1	69293.ENSGACP00000000615	0.5560377358490567	0.6617597998331944	rgb(0,28,178)	Ribosomal protein L23; Belongs to the universal ribosomal protein uL14 family
+G3N7Z3	69293.ENSGACP00000001427	0.27890566037735853	0.6107172643869891	rgb(117,117,239)	Oxoglutarate (alpha-ketoglutarate) dehydrogenase b (lipoamide)
+G3N8J1	69293.ENSGACP00000019637	0.34071698113207544	0.3134695579649708	rgb(137,239,117)	Histone H4; Core component of nucleosome. Nucleosomes wrap and compact DNA into chromatin, limiting DNA accessibility to the cellular machineries which require DNA as a template. Histones thereby play a central role in transcription regulation, DNA repair, DNA replication and chromosomal stability. DNA accessibility is regulated via a complex set of post-translational modifications of histones, also called histone code, and nucleosome remodeling
+G3N8X9	69293.ENSGACP00000001765	0.6096981132075472	0.3577564637197665	rgb(178,171,0)	Uncharacterized protein; Actin, beta-like 2; Belongs to the actin family
+G3NBA2	69293.ENSGACP00000002598	0.2109811320754717	0.8366555462885739	rgb(173,239,117)	NADH dehydrogenase (ubiquinone) Fe-S protein 5
+G3NBG2	69293.ENSGACP00000002659	0.5499245283018868	0.7608423686405339	rgb(117,239,235)	Ribosomal protein L8
+G3NDE4	69293.ENSGACP00000003344	0.2272830188679245	0.9079649708090075	rgb(117,171,239)	Expressed sequence CO360592; NADH dehydrogenase (ubiquinone) 1 beta subcomplex, 4, 15kDa
+G3NE33	69293.ENSGACP00000003733	0.4371698113207547	0.2977064220183486	rgb(101,255,163)	annotation not available
+G3NG11	69293.ENSGACP00000004266	0.6694716981132076	0.7668473728106756	rgb(117,239,133)	Ribosomal protein L24
+G3NGV7	69293.ENSGACP00000004564	0.2836603773584906	0.5829441201000835	rgb(239,182,117)	LSM3 homolog, U6 small nuclear RNA associated (S. cerevisiae)
+G3NHE9	69293.ENSGACP00000004757	0.6816981132075471	0.6550041701417849	rgb(117,239,184)	Ribosomal protein L30
+G3NHR1	69293.ENSGACP00000004871	0.4120377358490566	0.40279399499582985	rgb(151,239,117)	Hyaluronan binding protein 2
+G3NIG2	69293.ENSGACP00000005122	0.5947547169811321	0.6685154295246039	rgb(217,239,117)	Ribosomal protein S23; Belongs to the universal ribosomal protein uS12 family
+G3NJS1	69293.ENSGACP00000005583	0.7210943396226416	0.5604253544620518	rgb(255,0,0)	annotation not available
+G3NJU3	69293.ENSGACP00000005605	0.7238113207547171	0.24591326105087574	rgb(239,146,117)	Myosin, light chain 12, genome duplicate 1
+G3NLJ0	69293.ENSGACP00000006203	0.6898490566037737	0.7165554628857381	rgb(117,236,239)	Ribosomal protein L35a
+G3NPA2	69293.ENSGACP00000007166	0.32169811320754715	0.9049624687239366	rgb(144,239,117)	Cytochrome b-c1 complex subunit 7; Component of the ubiquinol-cytochrome c reductase complex (complex III or cytochrome b-c1 complex), which is part of the mitochondrial respiratory chain
+G3NPV3	69293.ENSGACP00000007368	0.3169433962264151	0.42906588824020014	rgb(117,239,206)	Programmed cell death 6 interacting protein
+G3NRK0	69293.ENSGACP00000007967	0.5302264150943397	0.6910341951626356	rgb(239,233,117)	40S ribosomal protein SA; Required for the assembly and/or stability of the 40S ribosomal subunit. Required for the processing of the 20S rRNA- precursor to mature 18S rRNA in a late step of the maturation of 40S ribosomal subunits. Also functions as a cell surface receptor for laminin. Plays a role in cell adhesion to the basement membrane and in the consequent activation of signaling transduction pathways. May play a role in cell fate determination and tissue morphogenesis; Belongs to the universal ribosomal protein uS2 family
+G3NS10	69293.ENSGACP00000008127	0.5580754716981133	0.1918682235195997	rgb(239,204,117)	Actin, alpha, cardiac muscle 1a; Belongs to the actin family
+G3NSA9	69293.ENSGACP00000008226	0.6620000000000001	0.2091326105087573	rgb(195,239,117)	Leiomodin 1 (smooth muscle)
+G3NT23	69293.ENSGACP00000008491	0.8311320754716982	0.4478315262718932	rgb(209,239,117)	Tubulin alpha chain; Tubulin is the major constituent of microtubules. It binds two moles of GTP, one at an exchangeable site on the beta chain and one at a non-exchangeable site on the alpha chain
+G3NTC1	69293.ENSGACP00000008589	0.3169433962264151	0.3765221017514595	rgb(239,168,117)	Methylenetetrahydrofolate dehydrogenase (NADP+ dependent) 1b
+G3NTD6	69293.ENSGACP00000008604	0.3991320754716981	0.7450792326939116	rgb(129,239,117)	ATP synthase subunit alpha; Produces ATP from ADP in the presence of a proton gradient across the membrane
+G3NU97	69293.ENSGACP00000008915	0.6314339622641509	0.6474979149291077	rgb(117,239,162)	Ribosomal protein S13; Belongs to the universal ribosomal protein uS15 family
+G3NUA6	69293.ENSGACP00000008924	0.40252830188679245	0.4553377814845705	rgb(239,175,117)	ER lipid raft associated 1
+G3NW14	69293.ENSGACP00000009533	0.183811320754717	0.643744787322769	rgb(239,226,117)	6-phosphogluconate dehydrogenase, decarboxylating; Catalyzes the oxidative decarboxylation of 6- phosphogluconate to ribulose 5-phosphate and CO(2), with concomitant reduction of NADP to NADPH; Belongs to the 6-phosphogluconate dehydrogenase family
+G3NXQ8	69293.ENSGACP00000010128	0.3033584905660377	0.7608423686405339	rgb(117,128,239)	ATP synthase, H+ transporting, mitochondrial F0 complex, subunit b, isoform 1
+G3NXT2	69293.ENSGACP00000010152	0.5879622641509435	0.8133861551292745	rgb(117,229,239)	Eukaryotic translation initiation factor 3 subunit C; Component of the eukaryotic translation initiation factor 3 (eIF-3) complex, which is involved in protein synthesis of a specialized repertoire of mRNAs and, together with other initiation factors, stimulates binding of mRNA and methionyl-tRNAi to the 40S ribosome. The eIF-3 complex specifically targets and initiates translation of a subset of mRNAs involved in cell proliferation
+G3NXX5	69293.ENSGACP00000010195	0.6192075471698114	0.3397414512093411	rgb(202,239,117)	Actin, alpha, cardiac muscle 1; Belongs to the actin family
+G3NYB9	69293.ENSGACP00000010339	0.33052830188679244	0.8276480400333612	rgb(239,153,117)	annotation not available
+G3NYX9	69293.ENSGACP00000010550	0.46841509433962264	0.2354045037531276	rgb(117,239,155)	Lymphocyte cytosolic plastin 1
+G3P2D0	69293.ENSGACP00000011753	0.7686415094339623	0.6129691409507924	rgb(117,157,239)	Glutaredoxin (thioltransferase)
+G3P3G8	69293.ENSGACP00000012141	0.559433962264151	0.4981234361968307	rgb(166,239,117)	T-complex 1; Molecular chaperone; assists the folding of proteins upon ATP hydrolysis
+G3P5V0	69293.ENSGACP00000012973	0.5743773584905661	0.7338198498748958	rgb(117,239,148)	Ribosomal protein S18; Belongs to the universal ribosomal protein uS13 family
+G3P6S6	69293.ENSGACP00000013300	0.4310566037735849	0.5168890742285238	rgb(117,239,198)	Heat shock protein 90, beta (grp94), member 1
+G3P8Y4	69293.ENSGACP00000014058	0.4901509433962264	0.43206839032527106	rgb(117,178,239)	Histidine triad nucleotide binding protein 1
+G3P920	69293.ENSGACP00000014094	0.739433962264151	0.4087989991659716	rgb(117,120,239)	annotation not available
+G3P9S4	69293.ENSGACP00000014348	0.2429056603773585	0.6550041701417849	rgb(255,175,101)	Isocitrate dehydrogenase 2 (NADP+), mitochondrial; Belongs to the isocitrate and isopropylmalate dehydrogenases family
+G3PDV0	69293.ENSGACP00000015774	0.5329433962264151	0.7188073394495413	rgb(117,215,239)	Ribosomal protein S2; Belongs to the universal ribosomal protein uS5 family
+G3PDW9	69293.ENSGACP00000015793	0.6497735849056604	0.803628023352794	rgb(117,207,239)	Ribosomal protein S27, isoform 2
+G3PFE7	69293.ENSGACP00000016321	0.7686415094339623	0.7706005004170142	rgb(224,239,117)	PYD and CARD domain containing
+G3PHA5	69293.ENSGACP00000016980	0.5091698113207547	0.5836947456213512	rgb(117,239,126)	Uncharacterized protein; Eukaryotic translation elongation factor 2a, tandem duplicate 2
+G3PIX9	69293.ENSGACP00000017558	0.34071698113207544	0.4650959132610509	rgb(117,239,220)	ER lipid raft associated 2
+G3PJ10	69293.ENSGACP00000017589	0.6239622641509435	0.7841117597998333	rgb(122,239,117)	Ribosomal protein L22
+G3PJV6	69293.ENSGACP00000017886	0.49762264150943397	0.46959966638865724	rgb(239,160,117)	Heat shock protein 90kDa alpha (cytosolic), class B member 1
+G3PKP7	69293.ENSGACP00000018177	0.28705660377358494	0.8891993327773146	rgb(117,117,239)	NADH dehydrogenase (ubiquinone) 1 alpha subcomplex, 9
+G3PLE8	69293.ENSGACP00000018429	0.3848679245283019	0.7015429524603837	rgb(239,218,117)	ATP synthase subunit beta; Produces ATP from ADP in the presence of a proton gradient across the membrane
+G3PM61	69293.ENSGACP00000018692	0.3678867924528302	0.9162218515429525	rgb(117,149,239)	Cytochrome b-c1 complex subunit Rieske, mitochondrial; Component of the ubiquinol-cytochrome c reductase complex (complex III or cytochrome b-c1 complex), which is a respiratory chain that generates an electrochemical potential coupled to ATP synthesis
+G3PP08	69293.ENSGACP00000019341	0.6015471698113208	0.6144703919933279	rgb(117,239,191)	Ribosomal protein L27; Belongs to the eukaryotic ribosomal protein eL27 family
+G3PP62	69293.ENSGACP00000019395	0.7998867924528302	0.15358632193494579	rgb(117,239,177)	Uncharacterized protein; Keratin, type 1, gene 19d; Belongs to the intermediate filament family
+G3PP78	69293.ENSGACP00000019411	0.6395849056603774	0.5093828190158466	rgb(117,239,169)	Chaperonin containing TCP1 subunit 2; Molecular chaperone; assists the folding of proteins upon ATP hydrolysis
+G3PPN8	69293.ENSGACP00000019573	0.26939622641509436	0.8216430358632194	rgb(117,117,239)	NADH dehydrogenase (ubiquinone) Fe-S protein 1; Belongs to the complex I 75 kDa subunit family
+G3PPP6	69293.ENSGACP00000019581	0.08464150943396226	0.597956630525438	rgb(150,101,255)	Lactoylglutathione lyase; Catalyzes the conversion of hemimercaptal, formed from methylglyoxal and glutathione, to S-lactoylglutathione
+G3PQL2	69293.ENSGACP00000019897	0.2571698113207547	0.7638448707256048	rgb(117,239,119)	ATP synthase-coupling factor 6, mitochondrial; Mitochondrial membrane ATP synthase (F(1)F(0) ATP synthase or Complex V) produces ATP from ADP in the presence of a proton gradient across the membrane which is generated by electron transport complexes of the respiratory chain
+G3PQX4	69293.ENSGACP00000020009	0.693245283018868	0.6880316930775647	rgb(117,164,239)	Ribosomal protein L31
+G3PSB5	69293.ENSGACP00000020501	0.7924150943396226	0.665512927439533	rgb(180,239,117)	annotation not available
+G3PSB6	69293.ENSGACP00000020502	0.7924150943396226	0.7180567139282736	rgb(117,135,239)	Hyaluronan and proteoglycan link protein 1b
+G3PT54	69293.ENSGACP00000020790	0.6504528301886793	0.714303586321935	rgb(117,239,227)	Ribosomal protein L13; Belongs to the eukaryotic ribosomal protein eL13 family
+G3PVG3	69293.ENSGACP00000021600	0.7863018867924528	0.37727272727272726	rgb(117,239,213)	Transmembrane emp24 protein transport domain containing 9
+G3PVK4	69293.ENSGACP00000021643	0.6973207547169812	0.09503753127606339	rgb(239,117,117)	Talin 2a
+G3PY18	69293.ENSGACP00000022507	0.6579245283018869	0.6009591326105088	rgb(231,239,117)	Ribosomal protein S17
+G3PYA1	69293.ENSGACP00000022591	0.6076603773584905	0.22864887406171813	rgb(239,131,117)	annotation not available
+G3PYU1	69293.ENSGACP00000022781	0.8976981132075472	0.3194745621351126	rgb(117,200,239)	Cathepsin D; Belongs to the peptidase A1 family
+G3Q289	69293.ENSGACP00000023988	0.5315849056603774	0.2474145120934112	rgb(238,239,117)	Gelsolin a
+G3Q2Y3	69293.ENSGACP00000024232	0.9160377358490567	0.3742702251876564	rgb(101,199,255)	Junction plakoglobin a
+G3Q393	69293.ENSGACP00000024345	0.8453962264150944	0.36451209341117596	rgb(117,193,239)	Spectrin alpha 2
+G3Q3A5	69293.ENSGACP00000024357	0.26939622641509436	0.2188907422852377	rgb(159,239,117)	SET translocation (myeloid leukemia-associated) B; Belongs to the nucleosome assembly protein (NAP) family
+G3Q3X8	69293.ENSGACP00000024582	0.6429811320754718	0.08753127606338615	rgb(117,186,239)	Talin 1
+G3Q3Z6	69293.ENSGACP00000024600	0.3644905660377359	0.2188907422852377	rgb(187,255,101)	Clathrin light chain; Clathrin is the major protein of the polyhedral coat of coated pits and vesicles
+G3Q4Z0	69293.ENSGACP00000024944	0.7801886792452831	0.505629691409508	rgb(117,142,239)	Tubulin beta chain; Tubulin is the major constituent of microtubules. It binds two moles of GTP, one at an exchangeable site on the beta chain and one at a non-exchangeable site on the alpha chain
+G3Q659	69293.ENSGACP00000025366	0.528188679245283	0.6467472894078399	rgb(239,139,117)	Ribosomal protein S15a; Belongs to the universal ribosomal protein uS8 family
+G3Q6T4	69293.ENSGACP00000025594	0.07920754716981132	0.8178899082568808	rgb(239,197,117)	Sex hormone binding globulin
+G3Q972	69293.ENSGACP00000026436	0.6015471698113208	0.70604670558799	rgb(188,239,117)	Ribosomal protein S16; Belongs to the universal ribosomal protein uS9 family
+G3QAJ2	69293.ENSGACP00000026908	0.46637735849056605	0.3367389491242702	rgb(239,211,117)	Transgelin 2; Belongs to the calponin family
+G3QBL0	69293.ENSGACP00000027276	0.26939622641509436	0.5183903252710593	rgb(117,239,140)	Serine/arginine-rich splicing factor 1b
+G3QBU5	69293.ENSGACP00000027361	0.48947169811320757	0.8689324437030859	rgb(117,222,239)	Solute carrier family 25 alpha, member 5; Belongs to the mitochondrial carrier (TC 2.A.29) family
+G3QCC3	69293.ENSGACP00000027539	0.35362264150943395	0.5424103419516264	rgb(0,178,157)	Heterogeneous nuclear ribonucleoprotein A/Ba
+Q804E3	69293.ENSGACP00000009457	0.3169433962264151	0.27143452877397833	rgb(14,178,0)	Homeo box A13a

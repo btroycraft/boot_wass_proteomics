@@ -3,57 +3,45 @@ library(tidyverse)
 DATA_GILL <- read.csv('data/cDIA_MXLSAKBH-Exp1-2-3-4_Gill_r_format.csv', stringsAsFactors = FALSE)
 
 NAME_LIST <- c(
-  'Total' = 'total',
-  'Laguna de la Bocana del Rosaria' = 'rosaria',
-  'Bodega Harbor' = 'bodega',
-  'Lake Solano' = 'solano',
-  'Westchester Lagoon' = 'westchester'
+  total = 'Total',
+  rosaria = 'Laguna de la Bocana del Rosaria',
+  bodega = 'Bodega Harbor',
+  solano = 'Lake Solano',
+  westchester = 'Westchester Lagoon'
 )
 
-IND_LIST <- list(
-  all = names(DATA_GILL)[!(names(DATA_GILL) %in% c('sample', 'location'))],
-  max = lapply(NAME_LIST, . %>%
-    sprintf(fmt = 'data/ind_max_%s.csv') %>%
-    read.csv(stringsAsFactors = FALSE) %>%
-    .[1, ] %>%
-    select(!val) %>%
-    as.character
-  ),
-  top = list(
-    betti0 = lapply(NAME_LIST, . %>%
-      sprintf(fmt = 'data/ind_top_%s_betti0.csv') %>%
-      read.csv(stringsAsFactors = FALSE) %>%
-      .[1, ] %>%
-      select(!val) %>%
-      as.character
-    ),
-    betti1 = lapply(NAME_LIST, . %>%
-      sprintf(fmt = 'data/ind_top_%s_betti1.csv') %>%
+# List of references for cases where the name of the branch is needed
+# rapply(REF_LIST, how = 'replace', . %>% IND_LIST[[.]] ) should
+# reproduce IND_LIST
+
+REF_LIST <- c(
+  list(all = 'all'),
+  list(
+    max = 'max',
+    top = list(
+      betti0 = c('top', 'betti0'),
+      betti1 = c('top', 'betti1')
+    )
+  ) %>%
+    rapply(how = 'replace', function(._)
+      lapply(names(NAME_LIST), . %>% c(._, .)) %>%
+        set_names(names(NAME_LIST))
+    )
+)
+
+# Loads a nested list of indices, corresponding to all selection steps
+# Only the first most separating subset is considered for each
+
+IND_LIST <- c(
+  list(all = names(DATA_GILL)[!(names(DATA_GILL) %in% c('sample', 'location'))]),
+  REF_LIST[c('max', 'top')] %>%
+    rapply(how = 'replace', . %>%
+      c(list(sep = '_')) %>%
+      do.call(paste, .) %>%
+      paste0('data/protein_selection/ind_', ., '.csv') %>%
       read.csv(stringsAsFactors = FALSE) %>%
       .[1, ] %>%
       select(!val) %>%
       as.character
     )
-  )
 )
-
-REF_LIST <- list(
-  all = 'all',
-  max =
-    names(IND_LIST$max) %>%
-    set_names(., .) %>%
-    as.list %>%
-    lapply(. %>% c('max', .) ),
-  top = list(
-    betti0 =
-      names(IND_LIST$top$betti0) %>%
-      set_names(., .) %>%
-      lapply(. %>% c('top', 'betti0', .) ),
-    betti1 =
-      names(IND_LIST$top$betti1) %>%
-      set_names(., .) %>%
-      lapply(. %>% c('top', 'betti1', .) )
-  )
-)
-
-DATA_LIST <- rapply(IND_LIST, how = 'replace', . %>% select(DATA_GILL, .) )

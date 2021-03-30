@@ -1,0 +1,65 @@
+clustering method	cluster number	cluster color	gene count	protein name	protein identifier	protein description
+MCL	1	Red	18	G3N556	69293.ENSGACP00000000426	Proteasome (prosome, macropain) subunit, alpha type,5
+MCL	1	Red	18	G3N5P1	69293.ENSGACP00000000615	Ribosomal protein L23; Belongs to the universal ribosomal protein uL14 family
+MCL	1	Red	18	G3NBG2	69293.ENSGACP00000002659	Ribosomal protein L8
+MCL	1	Red	18	G3NDY7	69293.ENSGACP00000003538	Ribosomal protein L32
+MCL	1	Red	18	G3NIG2	69293.ENSGACP00000005122	Ribosomal protein S23; Belongs to the universal ribosomal protein uS12 family
+MCL	1	Red	18	G3NKB4	69293.ENSGACP00000005776	Ribosomal protein L22
+MCL	1	Red	18	G3NLJ0	69293.ENSGACP00000006203	Ribosomal protein L35a
+MCL	1	Red	18	G3NU97	69293.ENSGACP00000008915	Ribosomal protein S13; Belongs to the universal ribosomal protein uS15 family
+MCL	1	Red	18	G3NUU3	69293.ENSGACP00000009112	Tumor protein, translationally-controlled 1; Belongs to the TCTP family
+MCL	1	Red	18	G3P3K4	69293.ENSGACP00000012177	Protein phosphatase 2 (formerly 2A), regulatory subunit A (PR 65), alpha isoform
+MCL	1	Red	18	G3P5V0	69293.ENSGACP00000012973	Ribosomal protein S18; Belongs to the universal ribosomal protein uS13 family
+MCL	1	Red	18	G3PFN1	69293.ENSGACP00000016405	Proteasome (prosome, macropain) 26S subunit, ATPase, 4; Belongs to the AAA ATPase family
+MCL	1	Red	18	G3PHA5	69293.ENSGACP00000016980	Uncharacterized protein; Eukaryotic translation elongation factor 2a, tandem duplicate 2
+MCL	1	Red	18	G3PJ10	69293.ENSGACP00000017589	Ribosomal protein L22
+MCL	1	Red	18	G3PP78	69293.ENSGACP00000019411	Chaperonin containing TCP1 subunit 2; Molecular chaperone; assists the folding of proteins upon ATP hydrolysis
+MCL	1	Red	18	G3PQX4	69293.ENSGACP00000020009	Ribosomal protein L31
+MCL	1	Red	18	G3PUE2	69293.ENSGACP00000021229	Ribosomal protein L28
+MCL	1	Red	18	G3Q162	69293.ENSGACP00000023610	Macrophage migration inhibitory factor
+MCL	2	Brown	8	G3N7Z3	69293.ENSGACP00000001427	Oxoglutarate (alpha-ketoglutarate) dehydrogenase b (lipoamide)
+MCL	2	Brown	8	G3NSD2	69293.ENSGACP00000008249	ATP-citrate synthase; ATP-citrate synthase is the primary enzyme responsible for the synthesis of cytosolic acetyl-CoA in many tissues; In the C-terminal section; belongs to the succinate/malate CoA ligase alpha subunit family
+MCL	2	Brown	8	G3NTD6	69293.ENSGACP00000008604	ATP synthase subunit alpha; Produces ATP from ADP in the presence of a proton gradient across the membrane
+MCL	2	Brown	8	G3PLE8	69293.ENSGACP00000018429	ATP synthase subunit beta; Produces ATP from ADP in the presence of a proton gradient across the membrane
+MCL	2	Brown	8	G3PZV8	69293.ENSGACP00000023148	Uncharacterized protein; Isocitrate dehydrogenase 3 (NAD+) alpha
+MCL	2	Brown	8	G3Q0N5	69293.ENSGACP00000023430	Solute carrier family 25 (mitochondrial carrier; adenine nucleotide translocator), member 4; Belongs to the mitochondrial carrier (TC 2.A.29) family
+MCL	2	Brown	8	G3QBP3	69293.ENSGACP00000027309	Acetyltransferase component of pyruvate dehydrogenase complex; The pyruvate dehydrogenase complex catalyzes the overall conversion of pyruvate to acetyl-CoA and CO(2)
+MCL	2	Brown	8	G3QBU5	69293.ENSGACP00000027361	Solute carrier family 25 alpha, member 5; Belongs to the mitochondrial carrier (TC 2.A.29) family
+MCL	3	Dark Golden Rod	7	G3NG36	69293.ENSGACP00000004291	Small nuclear ribonucleoprotein polypeptides B and B1
+MCL	3	Dark Golden Rod	7	G3NZM5	69293.ENSGACP00000010798	LSM4 homolog, U6 small nuclear RNA associated (S. cerevisiae)
+MCL	3	Dark Golden Rod	7	G3PIZ9	69293.ENSGACP00000017578	annotation not available
+MCL	3	Dark Golden Rod	7	G3PPW2	69293.ENSGACP00000019647	Uncharacterized protein; Serine/arginine-rich splicing factor 2b
+MCL	3	Dark Golden Rod	7	G3PR19	69293.ENSGACP00000020054	annotation not available
+MCL	3	Dark Golden Rod	7	G3PZX4	69293.ENSGACP00000023164	Small nuclear ribonucleoprotein D3 polypeptide
+MCL	3	Dark Golden Rod	7	G3QBL0	69293.ENSGACP00000027276	Serine/arginine-rich splicing factor 1b
+MCL	4	Yellow	6	G3N508	69293.ENSGACP00000000378	Myosin light chain kinase b
+MCL	4	Yellow	6	G3NBU5	69293.ENSGACP00000002793	Slow myosin heavy chain 3; Belongs to the TRAFAC class myosin-kinesin ATPase superfamily. Myosin family
+MCL	4	Yellow	6	G3NS10	69293.ENSGACP00000008127	Actin, alpha, cardiac muscle 1a; Belongs to the actin family
+MCL	4	Yellow	6	G3NXX5	69293.ENSGACP00000010195	Actin, alpha, cardiac muscle 1; Belongs to the actin family
+MCL	4	Yellow	6	G3PIF1	69293.ENSGACP00000017379	Actinin, alpha 4
+MCL	4	Yellow	6	G3Q5J2	69293.ENSGACP00000025148	Actinin alpha 3a
+MCL	5	Olive	6	G3P3G8	69293.ENSGACP00000012141	T-complex 1; Molecular chaperone; assists the folding of proteins upon ATP hydrolysis
+MCL	5	Olive	6	G3P6S6	69293.ENSGACP00000013300	Heat shock protein 90, beta (grp94), member 1
+MCL	5	Olive	6	G3PI27	69293.ENSGACP00000017262	annotation not available
+MCL	5	Olive	6	G3PJV6	69293.ENSGACP00000017886	Heat shock protein 90kDa alpha (cytosolic), class B member 1
+MCL	5	Olive	6	G3Q9L4	69293.ENSGACP00000026579	Si:dkey-4p15.3; Heat shock protein 8; Belongs to the heat shock protein 70 family
+MCL	5	Olive	6	G3QA72	69293.ENSGACP00000026788	Stress-induced-phosphoprotein 1 (Hsp70/Hsp90-organizing protein)
+MCL	6	Light Green	3	G3NW14	69293.ENSGACP00000009533	6-phosphogluconate dehydrogenase, decarboxylating; Catalyzes the oxidative decarboxylation of 6- phosphogluconate to ribulose 5-phosphate and CO(2), with concomitant reduction of NADP to NADPH; Belongs to the 6-phosphogluconate dehydrogenase family
+MCL	6	Light Green	3	G3NY86	69293.ENSGACP00000010306	Glucose phosphate isomerase a; Belongs to the GPI family
+MCL	6	Light Green	3	G3PWE5	69293.ENSGACP00000021934	Pyruvate kinase, muscle, a; Belongs to the pyruvate kinase family
+MCL	7	Green 2	3	G3N8J1	69293.ENSGACP00000019637	Histone H4; Core component of nucleosome. Nucleosomes wrap and compact DNA into chromatin, limiting DNA accessibility to the cellular machineries which require DNA as a template. Histones thereby play a central role in transcription regulation, DNA repair, DNA replication and chromosomal stability. DNA accessibility is regulated via a complex set of post-translational modifications of histones, also called histone code, and nucleosome remodeling
+MCL	7	Green 2	3	G3NBJ8	69293.ENSGACP00000002709	annotation not available
+MCL	7	Green 2	3	G3NE33	69293.ENSGACP00000003733	annotation not available
+MCL	8	Green	3	G3PVK4	69293.ENSGACP00000021643	Talin 2a
+MCL	8	Green	3	G3Q3X8	69293.ENSGACP00000024582	Talin 1
+MCL	8	Green	3	G3Q932	69293.ENSGACP00000026396	Calpain 2, (m/II) large subunit b; Belongs to the peptidase C2 family
+MCL	9	Blue	2	G3NR75	69293.ENSGACP00000007842	annotation not available
+MCL	9	Blue	2	G3P654	69293.ENSGACP00000013077	Ubiquitin-like modifier activating enzyme 1; Belongs to the ubiquitin-activating E1 family
+MCL	10	Light Sky Blue	2	G3Q2Y3	69293.ENSGACP00000024232	Junction plakoglobin a
+MCL	10	Light Sky Blue	2	G3Q393	69293.ENSGACP00000024345	Spectrin alpha 2
+MCL	11	Orchid 2	2	G3NYX9	69293.ENSGACP00000010550	Lymphocyte cytosolic plastin 1
+MCL	11	Orchid 2	2	G3Q289	69293.ENSGACP00000023988	Gelsolin a
+MCL	12	Purple	2	G3NT23	69293.ENSGACP00000008491	Tubulin alpha chain; Tubulin is the major constituent of microtubules. It binds two moles of GTP, one at an exchangeable site on the beta chain and one at a non-exchangeable site on the alpha chain
+MCL	12	Purple	2	G3Q4Z0	69293.ENSGACP00000024944	Tubulin beta chain; Tubulin is the major constituent of microtubules. It binds two moles of GTP, one at an exchangeable site on the beta chain and one at a non-exchangeable site on the alpha chain
+MCL	13	Orchid	1	G3PAZ5	69293.ENSGACP00000014769	Drebrin-like b
+MCL	14	Pink	1	G3N738	69293.ENSGACP00000001114	Peptidyl-prolyl cis-trans isomerase; PPIases accelerate the folding of proteins. It catalyzes the cis-trans isomerization of proline imidic peptide bonds in oligopeptides

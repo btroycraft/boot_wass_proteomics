@@ -1,0 +1,76 @@
+queryIndex	queryItem	stringId	preferredName	annotation
+1	G3N508	69293.ENSGACP00000000378	MYLK	Myosin light chain kinase b
+2	G3N556	69293.ENSGACP00000000426	ENSGACG00000000332	Proteasome (prosome, macropain) subunit, alpha type,5
+3	G3N5P1	69293.ENSGACP00000000615	ENSGACG00000000474	Ribosomal protein L23; Belongs to the universal ribosomal protein uL14 family
+4	G3N6A9	69293.ENSGACP00000000834	ENSGACG00000000642	Filamin C, gamma b (actin binding protein 280)
+5	G3N6B5	69293.ENSGACP00000000840	ENSGACG00000000651	Ferrochelatase; Catalyzes the ferrous insertion into protoporphyrin IX
+6	G3N738	69293.ENSGACP00000001114	ENSGACG00000000860	Peptidyl-prolyl cis-trans isomerase; PPIases accelerate the folding of proteins. It catalyzes the cis-trans isomerization of proline imidic peptide bonds in oligopeptides
+9	G3N7Z3	69293.ENSGACP00000001427	ENSGACG00000001103	Oxoglutarate (alpha-ketoglutarate) dehydrogenase b (lipoamide)
+10	G3N8I6	69293.ENSGACP00000001621	ENSGACG00000001249	Uncharacterized protein; Histone H1 like
+11	G3N8J1	69293.ENSGACP00000019637	ENSGACG00000014877	Histone H4; Core component of nucleosome. Nucleosomes wrap and compact DNA into chromatin, limiting DNA accessibility to the cellular machineries which require DNA as a template. Histones thereby play a central role in transcription regulation, DNA repair, DNA replication and chromosomal stability. DNA accessibility is regulated via a complex set of post-translational modifications of histones, also called histone code, and nucleosome remodeling
+12	G3NBG2	69293.ENSGACP00000002659	ENSGACG00000002035	Ribosomal protein L8
+13	G3NBJ8	69293.ENSGACP00000002709	ENSGACG00000002083	annotation not available
+14	G3NBU5	69293.ENSGACP00000002793	ENSGACG00000002145	Slow myosin heavy chain 3; Belongs to the TRAFAC class myosin-kinesin ATPase superfamily. Myosin family
+15	G3NCF7	69293.ENSGACP00000003007	ENSGACG00000002310	Caveolae associated protein 2a; Serum deprivation response a
+16	G3NDY7	69293.ENSGACP00000003538	ENSGACG00000002699	Ribosomal protein L32
+17	G3NE33	69293.ENSGACP00000003733	ENSGACG00000002850	annotation not available
+19	G3NG36	69293.ENSGACP00000004291	ENSGACG00000003262	Small nuclear ribonucleoprotein polypeptides B and B1
+22	G3NIG2	69293.ENSGACP00000005122	ENSGACG00000003895	Ribosomal protein S23; Belongs to the universal ribosomal protein uS12 family
+23	G3NKB4	69293.ENSGACP00000005776	ENSGACG00000004372	Ribosomal protein L22
+24	G3NLJ0	69293.ENSGACP00000006203	ENSGACG00000004699	Ribosomal protein L35a
+25	G3NPV3	69293.ENSGACP00000007368	ENSGACG00000005555	Programmed cell death 6 interacting protein
+26	G3NR75	69293.ENSGACP00000007842	ENSGACG00000005931	annotation not available
+27	G3NS10	69293.ENSGACP00000008127	ENSGACG00000006109	Actin, alpha, cardiac muscle 1a; Belongs to the actin family
+28	G3NSD2	69293.ENSGACP00000008249	ENSGACG00000006221	ATP-citrate synthase; ATP-citrate synthase is the primary enzyme responsible for the synthesis of cytosolic acetyl-CoA in many tissues; In the C-terminal section; belongs to the succinate/malate CoA ligase alpha subunit family
+29	G3NT23	69293.ENSGACP00000008491	ENSGACG00000006417	Tubulin alpha chain; Tubulin is the major constituent of microtubules. It binds two moles of GTP, one at an exchangeable site on the beta chain and one at a non-exchangeable site on the alpha chain
+30	G3NTD6	69293.ENSGACP00000008604	ENSGACG00000006418	ATP synthase subunit alpha; Produces ATP from ADP in the presence of a proton gradient across the membrane
+31	G3NU97	69293.ENSGACP00000008915	ENSGACG00000006703	Ribosomal protein S13; Belongs to the universal ribosomal protein uS15 family
+32	G3NUU3	69293.ENSGACP00000009112	ENSGACG00000006855	Tumor protein, translationally-controlled 1; Belongs to the TCTP family
+33	G3NW14	69293.ENSGACP00000009533	ENSGACG00000007164	6-phosphogluconate dehydrogenase, decarboxylating; Catalyzes the oxidative decarboxylation of 6- phosphogluconate to ribulose 5-phosphate and CO(2), with concomitant reduction of NADP to NADPH; Belongs to the 6-phosphogluconate dehydrogenase family
+34	G3NXX5	69293.ENSGACP00000010195	ENSGACG00000007661	Actin, alpha, cardiac muscle 1; Belongs to the actin family
+35	G3NY86	69293.ENSGACP00000010306	ENSGACG00000007744	Glucose phosphate isomerase a; Belongs to the GPI family
+36	G3NYX9	69293.ENSGACP00000010550	ENSGACG00000007959	Lymphocyte cytosolic plastin 1
+37	G3NZM5	69293.ENSGACP00000010798	ENSGACG00000008140	LSM4 homolog, U6 small nuclear RNA associated (S. cerevisiae)
+40	G3P3G8	69293.ENSGACP00000012141	ENSGACG00000009066	T-complex 1; Molecular chaperone; assists the folding of proteins upon ATP hydrolysis
+41	G3P3K4	69293.ENSGACP00000012177	ENSGACG00000009193	Protein phosphatase 2 (formerly 2A), regulatory subunit A (PR 65), alpha isoform
+42	G3P5V0	69293.ENSGACP00000012973	ENSGACG00000009814	Ribosomal protein S18; Belongs to the universal ribosomal protein uS13 family
+43	G3P654	69293.ENSGACP00000013077	ENSGACG00000009903	Ubiquitin-like modifier activating enzyme 1; Belongs to the ubiquitin-activating E1 family
+44	G3P6S6	69293.ENSGACP00000013300	ENSGACG00000010067	Heat shock protein 90, beta (grp94), member 1
+47	G3P8Y4	69293.ENSGACP00000014058	ENSGACG00000010631	Histidine triad nucleotide binding protein 1
+49	G3PAZ5	69293.ENSGACP00000014769	ENSGACG00000011169	Drebrin-like b
+50	G3PCE2	69293.ENSGACP00000015266	ENSGACG00000011546	Annexin A1a
+51	G3PDH7	69293.ENSGACP00000015651	ENSGACG00000011819	Collagen, type XII, alpha 1b
+53	G3PFN1	69293.ENSGACP00000016405	ENSGACG00000012379	Proteasome (prosome, macropain) 26S subunit, ATPase, 4; Belongs to the AAA ATPase family
+54	G3PHA5	69293.ENSGACP00000016980	ENSGACG00000012793	Uncharacterized protein; Eukaryotic translation elongation factor 2a, tandem duplicate 2
+56	G3PI27	69293.ENSGACP00000017262	ENSGACG00000013055	annotation not available
+57	G3PIF1	69293.ENSGACP00000017379	ACTN4	Actinin, alpha 4
+59	G3PIZ9	69293.ENSGACP00000017578	ENSGACG00000013294	annotation not available
+60	G3PJ10	69293.ENSGACP00000017589	ENSGACG00000013304	Ribosomal protein L22
+61	G3PJ29	69293.ENSGACP00000017608	ENSGACG00000013298	Rho GDP dissociation inhibitor (GDI) alpha
+62	G3PJV6	69293.ENSGACP00000017886	HSP90AB1	Heat shock protein 90kDa alpha (cytosolic), class B member 1
+63	G3PLE8	69293.ENSGACP00000018429	ATP5B	ATP synthase subunit beta; Produces ATP from ADP in the presence of a proton gradient across the membrane
+64	G3PP62	69293.ENSGACP00000019395	ENSGACG00000014689	Uncharacterized protein; Keratin, type 1, gene 19d; Belongs to the intermediate filament family
+65	G3PP78	69293.ENSGACP00000019411	CCT2	Chaperonin containing TCP1 subunit 2; Molecular chaperone; assists the folding of proteins upon ATP hydrolysis
+66	G3PPW2	69293.ENSGACP00000019647	ENSGACG00000014884	Uncharacterized protein; Serine/arginine-rich splicing factor 2b
+67	G3PQX4	69293.ENSGACP00000020009	ENSGACG00000015169	Ribosomal protein L31
+68	G3PR19	69293.ENSGACP00000020054	ENSGACG00000015206	annotation not available
+69	G3PUE2	69293.ENSGACP00000021229	ENSGACG00000016089	Ribosomal protein L28
+70	G3PVK4	69293.ENSGACP00000021643	ENSGACG00000016368	Talin 2a
+71	G3PWE5	69293.ENSGACP00000021934	ENSGACG00000016600	Pyruvate kinase, muscle, a; Belongs to the pyruvate kinase family
+76	G3PZV8	69293.ENSGACP00000023148	IDH3A	Uncharacterized protein; Isocitrate dehydrogenase 3 (NAD+) alpha
+77	G3PZX4	69293.ENSGACP00000023164	ENSGACG00000017533	Small nuclear ribonucleoprotein D3 polypeptide
+78	G3Q0N5	69293.ENSGACP00000023430	ENSGACG00000017708	Solute carrier family 25 (mitochondrial carrier; adenine nucleotide translocator), member 4; Belongs to the mitochondrial carrier (TC 2.A.29) family
+79	G3Q162	69293.ENSGACP00000023610	ENSGACG00000017868	Macrophage migration inhibitory factor
+80	G3Q289	69293.ENSGACP00000023988	ENSGACG00000018150	Gelsolin a
+81	G3Q2Y3	69293.ENSGACP00000024232	ENSGACG00000018328	Junction plakoglobin a
+82	G3Q393	69293.ENSGACP00000024345	ENSGACG00000018404	Spectrin alpha 2
+83	G3Q3X8	69293.ENSGACP00000024582	ENSGACG00000018584	Talin 1
+84	G3Q4Z0	69293.ENSGACP00000024944	ENSGACG00000018863	Tubulin beta chain; Tubulin is the major constituent of microtubules. It binds two moles of GTP, one at an exchangeable site on the beta chain and one at a non-exchangeable site on the alpha chain
+85	G3Q5J2	69293.ENSGACP00000025148	ENSGACG00000019023	Actinin alpha 3a
+87	G3Q6T4	69293.ENSGACP00000025594	ENSGACG00000019365	Sex hormone binding globulin
+91	G3Q932	69293.ENSGACP00000026396	ENSGACG00000019944	Calpain 2, (m/II) large subunit b; Belongs to the peptidase C2 family
+94	G3Q9L4	69293.ENSGACP00000026579	ENSGACG00000020117	Si:dkey-4p15.3; Heat shock protein 8; Belongs to the heat shock protein 70 family
+95	G3QA72	69293.ENSGACP00000026788	ENSGACG00000020272	Stress-induced-phosphoprotein 1 (Hsp70/Hsp90-organizing protein)
+98	G3QBL0	69293.ENSGACP00000027276	ENSGACG00000020621	Serine/arginine-rich splicing factor 1b
+99	G3QBP3	69293.ENSGACP00000027309	ENSGACG00000020647	Acetyltransferase component of pyruvate dehydrogenase complex; The pyruvate dehydrogenase complex catalyzes the overall conversion of pyruvate to acetyl-CoA and CO(2)
+100	G3QBU5	69293.ENSGACP00000027361	SLC25A5	Solute carrier family 25 alpha, member 5; Belongs to the mitochondrial carrier (TC 2.A.29) family

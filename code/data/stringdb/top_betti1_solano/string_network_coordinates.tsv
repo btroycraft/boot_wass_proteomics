@@ -1,0 +1,17 @@
+node	identifier	x_position	y_position	color	annotation
+G3N508	69293.ENSGACP00000000378	0.7415983606557378	0.8927966101694915	rgb(101,199,255)	Myosin light chain kinase b
+G3N6B5	69293.ENSGACP00000000840	0.37366803278688526	0.28135593220338984	rgb(239,227,117)	Ferrochelatase; Catalyzes the ferrous insertion into protoporphyrin IX
+G3N738	69293.ENSGACP00000001114	0.5544057377049181	0.29152542372881357	rgb(239,190,117)	Peptidyl-prolyl cis-trans isomerase; PPIases accelerate the folding of proteins. It catalyzes the cis-trans isomerization of proline imidic peptide bonds in oligopeptides
+G3N8J1	69293.ENSGACP00000019637	0.4953893442622951	0.6169491525423729	rgb(14,178,0)	Histone H4; Core component of nucleosome. Nucleosomes wrap and compact DNA into chromatin, limiting DNA accessibility to the cellular machineries which require DNA as a template. Histones thereby play a central role in transcription regulation, DNA repair, DNA replication and chromosomal stability. DNA accessibility is regulated via a complex set of post-translational modifications of histones, also called histone code, and nucleosome remodeling
+G3NCF7	69293.ENSGACP00000003007	0.35338114754098365	0.4491525423728814	rgb(178,239,117)	Caveolae associated protein 2a; Serum deprivation response a
+G3NG36	69293.ENSGACP00000004291	0.6088114754098362	0.1135593220338983	rgb(0,178,157)	Small nuclear ribonucleoprotein polypeptides B and B1
+G3NTD6	69293.ENSGACP00000008604	0.5230532786885246	0.5305084745762713	rgb(150,101,255)	ATP synthase subunit alpha; Produces ATP from ADP in the presence of a proton gradient across the membrane
+G3NUU3	69293.ENSGACP00000009112	0.4133196721311475	0.36271186440677966	rgb(0,28,178)	Tumor protein, translationally-controlled 1; Belongs to the TCTP family
+G3NXX5	69293.ENSGACP00000010195	0.6530737704918034	0.7555084745762712	rgb(215,239,117)	Actin, alpha, cardiac muscle 1; Belongs to the actin family
+G3P5V0	69293.ENSGACP00000012973	0.40225409836065573	0.5266949152542374	rgb(239,117,117)	Ribosomal protein S18; Belongs to the universal ribosomal protein uS13 family
+G3PFN1	69293.ENSGACP00000016405	0.388422131147541	0.6868644067796611	rgb(101,255,163)	Proteasome (prosome, macropain) 26S subunit, ATPase, 4; Belongs to the AAA ATPase family
+G3PI27	69293.ENSGACP00000017262	0.4953893442622951	0.22542372881355932	rgb(239,154,117)	annotation not available
+G3PWE5	69293.ENSGACP00000021934	0.25194672131147544	0.5190677966101696	rgb(187,255,101)	Pyruvate kinase, muscle, a; Belongs to the pyruvate kinase family
+G3Q289	69293.ENSGACP00000023988	0.6171106557377051	0.6169491525423729	rgb(178,171,0)	Gelsolin a
+G3Q2Y3	69293.ENSGACP00000024232	0.33309426229508193	0.6169491525423729	rgb(255,0,0)	Junction plakoglobin a
+G3QBU5	69293.ENSGACP00000027361	0.5940573770491804	0.4046610169491525	rgb(255,175,101)	Solute carrier family 25 alpha, member 5; Belongs to the mitochondrial carrier (TC 2.A.29) family

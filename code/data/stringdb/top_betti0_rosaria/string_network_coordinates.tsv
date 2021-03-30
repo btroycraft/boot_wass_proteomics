@@ -1,0 +1,18 @@
+node	identifier	x_position	y_position	color	annotation
+G3N680	69293.ENSGACP00000000804	0.4474385245901639	0.7115384615384617	rgb(14,178,0)	annotation not available
+G3NGT4	69293.ENSGACP00000004541	0.49170081967213114	0.36282051282051286	rgb(101,199,255)	Apolipoprotein C-II
+G3NI60	69293.ENSGACP00000005020	0.5876024590163935	0.28076923076923077	rgb(255,175,101)	annotation not available
+G3NNM8	69293.ENSGACP00000006942	0.5119877049180328	0.4653846153846154	rgb(239,151,117)	Alpha-2-macroglobulin-like 1
+G3NNT7	69293.ENSGACP00000007001	0.4474385245901639	0.8141025641025642	rgb(223,239,117)	Heat shock protein family, alpha-crystallin-related, b7; Belongs to the small heat shock protein (HSP20) family
+G3NRG5	69293.ENSGACP00000007932	0.39579918032786887	0.40384615384615385	rgb(239,220,117)	Neural cell adhesion molecule 3; Si:dkey-77d17.6
+G3NX96	69293.ENSGACP00000009965	0.3810450819672131	0.5192307692307693	rgb(101,255,163)	annotation not available
+G3NXW0	69293.ENSGACP00000010180	0.49170081967213114	0.2602564102564103	rgb(154,239,117)	ST13, Hsp70 interacting protein; Suppression of tumorigenicity 13 (colon carcinoma) (Hsp70 interacting protein)
+G3P1D2	69293.ENSGACP00000011405	0.5949795081967214	0.8346153846153846	rgb(0,178,157)	N(alpha)-acetyltransferase 10, NatA catalytic subunit
+G3PNK3	69293.ENSGACP00000019186	0.6097336065573772	0.3833333333333333	rgb(255,0,0)	annotation not available
+G3PPP6	69293.ENSGACP00000019581	0.3662909836065574	0.19871794871794873	rgb(0,28,178)	Lactoylglutathione lyase; Catalyzes the conversion of hemimercaptal, formed from methylglyoxal and glutathione, to S-lactoylglutathione
+G3PZH5	69293.ENSGACP00000023015	0.6042008196721312	0.567948717948718	rgb(189,239,117)	NADH dehydrogenase [ubiquinone] 1 alpha subcomplex subunit 12; Accessory subunit of the mitochondrial membrane respiratory chain NADH dehydrogenase (Complex I), that is believed not to be involved in catalysis. Complex I functions in the transfer of electrons from NADH to the respiratory chain. The immediate electron acceptor for the enzyme is believed to be ubiquinone
+G3Q2D6	69293.ENSGACP00000024035	0.49907786885245903	0.6115384615384616	rgb(239,186,117)	Ubiquinol-cytochrome c reductase, complex III subunit VII
+G3Q2Y3	69293.ENSGACP00000024232	0.5876024590163935	0.17820512820512824	rgb(178,171,0)	Junction plakoglobin a
+G3Q3C4	69293.ENSGACP00000024376	0.6272540983606558	0.6910256410256411	rgb(239,117,117)	Ribosomal protein L26
+G3Q972	69293.ENSGACP00000026436	0.5433401639344262	0.7243589743589745	rgb(187,255,101)	Ribosomal protein S16; Belongs to the universal ribosomal protein uS9 family
+Q804E3	69293.ENSGACP00000009457	0.39579918032786887	0.30128205128205127	rgb(150,101,255)	Homeo box A13a

@@ -1,0 +1,8 @@
+clustering method	cluster number	cluster color	gene count	protein name	protein identifier	protein description
+MCL	1	Red	3	G3NBG2	69293.ENSGACP00000002659	Ribosomal protein L8
+MCL	1	Red	3	G3PWE5	69293.ENSGACP00000021934	Pyruvate kinase, muscle, a; Belongs to the pyruvate kinase family
+MCL	1	Red	3	G3QBU5	69293.ENSGACP00000027361	Solute carrier family 25 alpha, member 5; Belongs to the mitochondrial carrier (TC 2.A.29) family
+MCL	2	Green	2	G3N7Z3	69293.ENSGACP00000001427	Oxoglutarate (alpha-ketoglutarate) dehydrogenase b (lipoamide)
+MCL	2	Green	2	G3QBP3	69293.ENSGACP00000027309	Acetyltransferase component of pyruvate dehydrogenase complex; The pyruvate dehydrogenase complex catalyzes the overall conversion of pyruvate to acetyl-CoA and CO(2)
+MCL	3	Blue	2	G3NG36	69293.ENSGACP00000004291	Small nuclear ribonucleoprotein polypeptides B and B1
+MCL	3	Blue	2	G3QBL0	69293.ENSGACP00000027276	Serine/arginine-rich splicing factor 1b

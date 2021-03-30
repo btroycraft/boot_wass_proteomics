@@ -1,0 +1,6 @@
+clustering method	cluster number	cluster color	gene count	protein name	protein identifier	protein description
+MCL	1	Red	3	G3P8K6	69293.ENSGACP00000013930	Heat shock 70kDa protein 8
+MCL	1	Red	3	G3QA18	69293.ENSGACP00000026734	Heat shock protein, alpha-crystallin-related, 1; Belongs to the small heat shock protein (HSP20) family
+MCL	1	Red	3	G3QA72	69293.ENSGACP00000026788	Stress-induced-phosphoprotein 1 (Hsp70/Hsp90-organizing protein)
+MCL	2	Green	2	G3NGV7	69293.ENSGACP00000004564	LSM3 homolog, U6 small nuclear RNA associated (S. cerevisiae)
+MCL	2	Green	2	G3PJ42	69293.ENSGACP00000017621	Aly/REF export factor
