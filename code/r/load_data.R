@@ -1,4 +1,5 @@
-library(tidyverse)
+library(dplyr)
+library(magrittr)
 
 DATA_GILL <- read.csv('data/cDIA_MXLSAKBH-Exp1-2-3-4_Gill_r_format.csv', stringsAsFactors = FALSE)
 
@@ -23,25 +24,32 @@ REF_LIST <- c(
       betti1 = c('top', 'betti1')
     )
   ) %>%
-    rapply(how = 'replace', function(._)
-      lapply(names(NAME_LIST), . %>% c(._, .)) %>%
-        set_names(names(NAME_LIST))
-    )
+  rapply(how = 'replace', function(._1){
+    lapply(names(NAME_LIST), function(._2){
+      c(._1, ._2)
+    }) %>%
+    set_names(names(NAME_LIST))
+  })
 )
 
 # Loads a nested list of indices, corresponding to all selection steps
 # Only the first most separating subset is considered for each
 
 IND_LIST <- c(
-  list(all = names(DATA_GILL)[!(names(DATA_GILL) %in% c('sample', 'location'))]),
+  list(
+    all =
+      DATA_GILL %>%
+      select(!c('sample', 'location')) %>%
+      names
+  ),
   REF_LIST[c('max', 'top')] %>%
-    rapply(how = 'replace', . %>%
-      c(list(sep = '_')) %>%
-      do.call(paste, .) %>%
-      paste0('data/protein_selection/ind_', ., '.csv') %>%
-      read.csv(stringsAsFactors = FALSE) %>%
-      .[1, ] %>%
-      select(!val) %>%
-      as.character
-    )
+  rapply(how = 'replace', function(._){
+    c(._, list(sep = '_')) %>%
+    do.call(what = paste) %>%
+    sprintf(fmt = 'data/protein_selection/ind_%s.csv') %>%
+    read.csv(stringsAsFactors = FALSE) %>%
+    extract(1, ) %>%
+    select(!val) %>%
+    as.character
+  })
 )

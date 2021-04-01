@@ -1,170 +1,127 @@
-library(ggplot2)
-
-cor.dend <- function(cor_mat){
+COR.DEND <- function(cor_mat){
   
-  cor_melt <-
-    t(combn(nrow(cor_mat), 2)) %>%
-      data.frame(cor_mat[lower.tri(cor_mat)]) %>%
-      set_names(c('i', 'j', 'val')) %>%
-      arrange(desc(val))
-  
-  group_list <-
-    seq_len(nrow(cor_mat)) %>%
-      lapply(. %>%
-        list(birth = 1, death = nrow(cor_mat)+1, clust = .)
-      )
-  
-  change <- c(1, rep(0, nrow(cor_mat)-1), -1)
-  
-  local({
-    
-    group_work <- seq_len(nrow(cor_mat))
-    ind_change <- 2
-    
-    lapply(seq_len(nrow(cor_vec)-1), function(._){
-      
-      i <- cor_melt$i[._]
-      j <- cor_melt$j[._]
-      val <- cor_melt$val[._]
-      
-      if(group_work[i] != group_work[j]){
-        group_pair <- sort(group_work[c(i, j)])
-        
-        group_list[[group_pair[1]]]$death <<- ind_change+1
-        group_list[[group_pair[2]]]$death <<- ind_change+1
-        group_list[[group_pair[1]]] <<-
-          list(
-            birth = ind_change+1,
-            death = nrow(cor_mat)+2,
-            clust = c(
-              group_list[[group_pair[1]]]$clust,
-              group_list[[group_pair[2]]]$clust),
-            group_list[[group_pair[1]]],
-            group_list[[group_pair[2]]]
-          )
-        group_list[[group_pair[2]]] <<- NA
-        
-        group_work[group_work == group_pair[2]] <<- group_pair[1]
-        
-        change[ind_change] <<- val
-        ind_change <<- ind_change + 1
-      }
+  cor_melt <- local({
+    combn <- rbind(
+      combn(nrow(cor_mat), 2),
+      cor_mat[lower.tri(cor_mat)]
+    )
+    combn <- combn[, order(combn[3, ], decreasing = TRUE)]
+    lapply(seq_len(ncol(combn)), function(._){
+      setNames(combn[, ._], c('i', 'j', 'val'))
     })
   })
   
-  group_list <- group_list[!is.na(group_list)]
-  
+  group_list <-
+    local({
+      group_list <-
+        lapply(seq_len(nrow(cor_mat)), function(._){
+          list(birth = 1, death = -1, clust = ._)
+        })
+      group_work <- seq_len(nrow(cor_mat))
+      for(._ in cor_melt){
+        if(group_work[._['i']] != group_work[._['j']]){
+          group_pair <- sort(group_work[._[c('i', 'j')]])
+          group_list[[group_pair[1]]]$death <-
+            group_list[[group_pair[2]]]$death <-
+              unname(._['val'])
+          group_list[[group_pair[1]]] <-
+            list(
+              group_list[[group_pair[1]]],
+              group_list[[group_pair[2]]],
+              birth = unname(._['val']),
+              death = -1,
+              clust = c(
+                group_list[[group_pair[1]]]$clust,
+                group_list[[group_pair[2]]]$clust
+              )
+            )
+          group_list[[group_pair[2]]] <- NA
+          group_work[group_work == group_pair[2]] <- group_pair[1]
+        }
+      }
+      group_list[[1]]
+    })
   ord <- order(group_list$clust)
-  rnk <- rank(group_list$clust)
-  
-  .cor.dend <- function(node){
-    node$clust <- rnk[node$clust]
-    if(length(node) == 5){
-      node[[4]] <- .cor.dend(node[[4]])
-      node[[4]] <- .cor.dend(node[[5]])
+  reorder <- function(._){
+    ._$clust <- ord[._$clust]
+    if(length(._) == 5){
+      ._[[1]] <- reorder(._[[1]])
+      ._[[2]] <- reorder(._[[2]])
     }
-    
-    return(node)
+    return(._)
   }
-  
   return(list(
-    lab = ord,
-    change = change,
-    tree = .cor.dend(group_list[[1]])
+    lab = if(is.null(rownames(cor_mat))){
+      group_list$clust
+    } else {
+      rownames(cor_mat)[group_list$clust]
+    },
+    tree = reorder(group_list)
   ))
 }
 
-dend.to.mat <- function(dend){
+GG.DEND <- function(dend, labels = TRUE, main = NULL, col = c('cornsilk', 'firebrick4'), xlim = c(-1, 1)){
   
-  n <- length(dend$change)-1
+  require(ggplot2)
   
-  mat <- matrix(0, n, n+1)
-  
-  .dend.to.mat <- function(tree){
-    val <- mean(tree$clust)
-    mat[tree$clust, tree$birth:(tree$death-1)] <<- val
-    
-    if(length(tree) == 5){
-      mat <<- .dend.to.mat(tree$child1)
-      mat <<- .dend.to.mat(tree$child2)
+  dend.unwrap <- function(._){
+    out <- list(c(
+      xmin = ._$death,
+      xmax = ._$birth,
+      ymin = min(._$clust)-.5,
+      ymax = max(._$clust)+.5,
+      val = mean(._$clust)
+    ))
+    if(length(._) == 5){
+      out <- c(out, dend.unwrap(._[[1]]), dend.unwrap(._[[2]]))
     }
+    return(out)
   }
   
-  .dend.to.mat(dend$tree)
-  
-  return(mat[, -1])
-}
-
-dend.mat.x <- function(x, dend){
-  
-  mat <- dend.to.mat(dend)
-  mat <- mat[, ncol(mat):1]
-  
-  change <- dend$change
-  change <- change[length(change):1]
-  
-  sapply(x, function(x){
+  plot_frame <- as.data.frame(do.call(rbind, dend.unwrap(dend$tree)))
+  plot_out <-
+    ggplot(data = plot_frame) +
+      coord_cartesian(xlim = xlim) +
+      geom_rect(
+        aes(
+          xmin = xmin,
+          xmax = xmax,
+          ymin = ymin,
+          ymax = ymax,
+          fill = val
+        ),
+        show.legend = FALSE
+      ) +
+      theme_classic() +
+      xlab('Correlation') +
+      scale_fill_gradient(low = col[1], high = col[2]) +
+      theme(
+        axis.line.y = element_blank(),
+        plot.title = element_text(hjust = .5)
+      )
     
-    ind_l <- max(which(change <= x))
-    
-    return( mat[, ind_l] )
-  })
-}
-
-dend.mat.grad.x <- function(x, dend){
-  
-  mat <- dend.to.mat(dend)
-  mat <- mat[, ncol(mat):1]
-  
-  change <- dend$change
-  change <- change[length(change):1]
-  
-  sapply(x, function(x){
-    
-    ind_l <- max(which(change <= x))
-    
-    if(ind_l == 1){
-      return( rep((ncol(mat)+1)/2, nrow(mat)) )
-    }
-    
-    x_l <- change[ind_l]
-    x_u <- change[ind_l+1]
-    
-    a <- (x-x_l)/(x_u-x_l)
-    
-    val_l <- mat[, ind_l-1]
-    val_u <- mat[, ind_l]
-    
-    return( ((1-a)*val_l+a*val_u) )
-  })
-}
-
-plot.dend <- function(dend){
-  
-  plot
-  
-  change <- dend$change
-  
-  plot.dend.rec <- function(dend, col){
-    
+  if(labels == TRUE){
+    plot_out <- plot_out +
+      scale_y_continuous(
+        breaks = dend$tree$clust,
+        labels = dend$lab,
+        position = 'right'
+      )
+  } else {
+    plot_out <- plot_out +
+      scale_y_continuous(
+        breaks = dend$tree$clust,
+        position = 'right'
+      ) +
+      theme(
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank()
+      )
   }
-}
-
-pdf('dend.pdf', 7, 7)
-  for(ind in 1:length(cor_list)){
-    
-    cor_mat = cor_list[[ind]]
-    
-    dend <- get.dend(cor_mat[indices[, 1], indices[, 1]])
-    x <- seq(.2, 1, length.out=10^3); x <- x[c(-1, -length(x))]
-    dend_mat <- dend.mat.x(x, dend)
-    
-    image(x = x, y = 1:nrow(dend_mat), z = t(dend_mat),
-          col=hcl.colors(10^3, "YlOrRd", rev = TRUE),
-          xlab='cor',
-          ylab='index',
-          main=names(cor_list)[ind])
+  
+  if(!is.null(main)){
+    plot_out <- plot_out + labs(title = main)
   }
-dev.off()
-
-
+  
+  plot_out
+}
