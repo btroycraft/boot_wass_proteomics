@@ -1,5 +1,8 @@
 library(gridExtra)
 library(cowplot)
+library(dplyr)
+library(magrittr)
+library(ggplot2)
 
 source('r/funcs.R')
 source('r/load_data.R')
