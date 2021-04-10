@@ -8,7 +8,7 @@ source('r/funcs.R')
 source('r/load_data.R')
 
 rapply(REF_LIST$max, how = 'replace', function(._){
-  
+   
   data_split <-
     DATA_GILL %>%
     select(IND_LIST[[._]]) %>%
@@ -22,11 +22,11 @@ rapply(REF_LIST$max, how = 'replace', function(._){
         {sapply(seq(0, 2, length.out = 10^3), function(._){
           PBETTI(., r = ._, q = 0)
         })} %>%
-        data.frame(
+        {data.frame(
           cor = seq(1, -1, length.out = 10^3),
           pbetti = pmax(., 1),
           location = ._
-        )
+        )}
     }) %>%
     do.call(what = rbind)
   
