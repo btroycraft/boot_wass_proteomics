@@ -39,7 +39,7 @@ IND_LIST <- c(
   list(
     all =
       DATA_GILL %>%
-      select(!c('sample', 'location')) %>%
+      dplyr::select(!c('sample', 'location')) %>%
       names
   ),
   REF_LIST[c('max', 'top')] %>%
@@ -53,3 +53,4 @@ IND_LIST <- c(
     as.character
   })
 )
+
