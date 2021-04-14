@@ -49,7 +49,7 @@ IND_LIST <- c(
     sprintf(fmt = 'data/protein_selection/ind_%s.csv') %>%
     read.csv(stringsAsFactors = FALSE) %>%
     extract(1, ) %>%
-    select(!val) %>%
+    dplyr::select(!val) %>%
     as.character
   })
 )
