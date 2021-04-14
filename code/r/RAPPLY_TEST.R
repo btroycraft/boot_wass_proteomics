@@ -59,7 +59,7 @@ plot_mds_string <- function(._){
     sprintf(fmt = 'data/stringdb/%s/string_nodes.csv') %>%
     read.csv(stringsAsFactors = FALSE)
   clusters$mcl_cluster <- as.factor(clusters$mcl_cluster)
-  plot_name <- sprintf('plots/plot_mds_%s.pdf', folder_name)
+  plot_name <- sprintf('plots/plot_mcl_mds_%s.pdf', folder_name)
   
   plot_list <- lapply(names(data_split), function(name){
     data <- data_split[[name]]
@@ -69,7 +69,7 @@ plot_mds_string <- function(._){
   plots_mds <- do.call(grid.arrange, plot_list)
   plot_mcl_cluster <- GG.MCL.CLUSTER(clusters, ._, interactions)
   plot_out <- grid.arrange(plots_mds, plot_mcl_cluster)
-  ggsave(plot_name, plot_out, width = 12, height = 12)
+  ggsave(plot_name, plot_out, width = 13, height = 13)
 }
 
 GG.MDS <- function(cor_mat, ._, env_name, clusters){
@@ -85,8 +85,8 @@ GG.MDS <- function(cor_mat, ._, env_name, clusters){
   }
   mds_data <- data.frame(fit$points)
   mds_cluster_data <- merge(mds_data, clusters, by.x = 0, by.y = "node")
-  ggplot(mds_cluster_data, aes(x = X1, y = X2, color = mcl_cluster)) +
-    geom_point(size = 3, alpha = alpha) +
+  ggplot(mds_cluster_data, aes(x = X1, y = X2)) +
+    geom_point(aes(fill = mcl_cluster), pch = 21, size = 3, alpha = alpha) +
     theme(plot.title = element_text(size=20, hjust = 0.5, face = "bold"),
           axis.title.x=element_blank(),
           axis.title.y=element_blank(),
@@ -99,21 +99,26 @@ GG.MDS <- function(cor_mat, ._, env_name, clusters){
 }
 
 GG.MCL.CLUSTER <- function(clusters, ._, interactions){
+  temp <- merge(interactions, clusters,  by.x = "node1" , by.y = "node")
   alpha = 0.8
   if("top" %in% ._){
     max_overlap = Inf
+    edge_data <- merge(temp, clusters, by.x = "node2", by.y = "node")
   } else{
     max_overlap = 20
+    edge_data <- merge(temp, clusters, by.x = "node2", by.y = "node") %>%
+      filter(combined_score > 0.9)
+    alpha = 0.7
   }
-  temp <- merge(interactions, clusters,  by.x = "node1" , by.y = "node")
-  edge_data <- merge(temp, clusters, by.x = "node2", by.y = "node")
-  ggplot(clusters, aes(x = x_position, y = y_position, color = mcl_cluster)) +
-    geom_point(size = 4) +
+  
+  
+  ggplot(clusters, aes(x = x_position, y = y_position))  +
     geom_segment(data=edge_data,aes(x=x_position.x,xend = x_position.y,
                                             y=y_position.x,yend = y_position.y),
-                                            colour="gray",
-                                            size = 1,
-                                            linetype = 2) +
+                                            colour="royalblue2",
+                                            size = 0.5,
+                                            alpha = alpha) +
+    geom_point(aes(fill = mcl_cluster), size = 5, pch = 21) +
     geom_text_repel(label = clusters$node,
                     max.overlaps = max_overlap,
                     fontface = "bold",
@@ -128,12 +133,7 @@ GG.MCL.CLUSTER <- function(clusters, ._, interactions){
       axis.text.y = element_blank(), # remove y-axis text
       axis.ticks = element_blank(),  # remove axis ticks
       axis.title.x = element_blank(), # remove x-axis labels
-      axis.title.y = element_blank(), # remove y-axis labels
-      panel.background = element_blank(), 
-      panel.border =element_blank(), 
-      panel.grid.major = element_blank(),  #remove major-grid labels
-      panel.grid.minor = element_blank(),  #remove minor-grid labels
-      plot.background = element_blank()) + 
+      axis.title.y = element_blank()) + 
     scale_color_viridis(discrete = TRUE, option = "D") +
     scale_fill_viridis(discrete = TRUE)
   
@@ -143,3 +143,6 @@ GG.MCL.CLUSTER <- function(clusters, ._, interactions){
 
 
 rapply(REF_LIST[c('max', 'top')], how = 'replace', plot_mds_string)
+
+
+rapply(REF_LIST[c('max')], how = 'replace', plot_mds_string)
