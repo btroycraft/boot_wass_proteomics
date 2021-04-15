@@ -7,7 +7,6 @@ library(gridExtra)
 library(viridis)
 
 source('r/load_data.R')
-source('r/dend.R')
 
 
 
@@ -100,15 +99,15 @@ GG.MDS <- function(cor_mat, ._, env_name, clusters){
 
 GG.MCL.CLUSTER <- function(clusters, ._, interactions){
   temp <- merge(interactions, clusters,  by.x = "node1" , by.y = "node")
-  alpha = 0.8
   if("top" %in% ._){
     max_overlap = Inf
     edge_data <- merge(temp, clusters, by.x = "node2", by.y = "node")
+    alpha = 1
   } else{
     max_overlap = 20
     edge_data <- merge(temp, clusters, by.x = "node2", by.y = "node") %>%
       filter(combined_score > 0.9)
-    alpha = 0.7
+    alpha = 0.6
   }
   
   
@@ -116,7 +115,7 @@ GG.MCL.CLUSTER <- function(clusters, ._, interactions){
     geom_segment(data=edge_data,aes(x=x_position.x,xend = x_position.y,
                                             y=y_position.x,yend = y_position.y),
                                             colour="royalblue2",
-                                            size = 0.5,
+                                            size = edge_data$combined_score*1.7,
                                             alpha = alpha) +
     geom_point(aes(fill = mcl_cluster), size = 5, pch = 21) +
     geom_text_repel(label = clusters$node,
@@ -145,4 +144,4 @@ GG.MCL.CLUSTER <- function(clusters, ._, interactions){
 rapply(REF_LIST[c('max', 'top')], how = 'replace', plot_mds_string)
 
 
-rapply(REF_LIST[c('max')], how = 'replace', plot_mds_string)
+
