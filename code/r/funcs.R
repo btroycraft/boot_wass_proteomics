@@ -100,7 +100,7 @@ COR.DEND <- function(cor_mat){
   ))
 }
 
-GG.DEND <- function(dend, labels = TRUE, outline = FALSE, main = NULL, col = c('yellow', 'red'), xlim = c(-1, 1)){
+GG.DEND <- function(dend, labels = TRUE, outline = FALSE, xlab = 'Correlation', main = NULL, col = c('yellow', 'red'), xlim = c(-1, 1)){
   
   require(ggplot2)
   
@@ -133,7 +133,7 @@ GG.DEND <- function(dend, labels = TRUE, outline = FALSE, main = NULL, col = c('
       show.legend = FALSE
     ) +
     theme_classic() +
-    xlab('Correlation') +
+    xlab(xlab) +
     scale_fill_gradient(low = col[1], high = col[2]) +
     theme(
       axis.line.y = element_blank(),
